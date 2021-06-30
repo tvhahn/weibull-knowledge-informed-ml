@@ -1,0 +1,21 @@
+name: weibull
+channels:
+  - nvidia
+  - pytorch
+  - conda-forge
+dependencies:
+  - python=3.8
+  - conda
+  - mamba
+  - pytorch
+  - torchvision
+  - torchaudio
+  - cudatoolkit=11.0
+  - jupyterlab
+  - numpy
+  - scipy
+  - matplotlib
+  - seaborn
+  - pandas
+  - scikit-learn
+
