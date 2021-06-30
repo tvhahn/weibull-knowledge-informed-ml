@@ -6,7 +6,7 @@ import seaborn as sns
 
 
 def create_fft(df, x_name='Time', y_name='b2_ch3', sample_freq=20480.0, show_plot=True, window='hamming', beta=8):
-    """Create FFT plot from a pandas dataframe
+    """Create FFT plot from a pandas dataframe of signals
 
     
     Parameters
