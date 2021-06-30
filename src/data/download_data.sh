@@ -12,7 +12,7 @@ cd $PROJECT_DIR/data/raw
 if [ ! -f IMS ]; then
     mkdir IMS
     cd IMS
-    wget https://ti.arc.nasa.gov/m/project/prognostic-repository/IMS.7z
+    wget -4 https://ti.arc.nasa.gov/m/project/prognostic-repository/IMS.7z
     cd ..
 fi
 
@@ -22,6 +22,6 @@ fi
 if [ ! -f FEMTO ]; then
     mkdir FEMTO
     cd FEMTO
-    wget https://ti.arc.nasa.gov/m/project/prognostic-repository/FEMTOBearingDataSet.zip
+    wget -4 https://ti.arc.nasa.gov/m/project/prognostic-repository/FEMTOBearingDataSet.zip
 fi
 
