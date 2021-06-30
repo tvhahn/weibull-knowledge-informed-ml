@@ -1,7 +1,9 @@
 #!/bin/bash
 PROJECT_DIR=$1
+cd $PROJECT_DIR
 
-mkdir $PROJECT_DIR/data/raw
+mkdir -p $PROJECT_DIR/data/raw
+
 # move to raw data folder
 cd $PROJECT_DIR/data/raw
 
