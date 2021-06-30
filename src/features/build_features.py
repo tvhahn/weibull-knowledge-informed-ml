@@ -5,7 +5,7 @@ from scipy import signal, fftpack
 import seaborn as sns
 
 
-def create_fft(df, x_name='Time', y_name='b2_ch3', sample_freq=20480.0, show_plot=True, window='hamming', beta=8):
+def create_fft(df, y_name='b2_ch3', sample_freq=20480.0, window='hamming', beta=8.0):
     """Create FFT plot from a pandas dataframe of signals
 
     
@@ -14,23 +14,33 @@ def create_fft(df, x_name='Time', y_name='b2_ch3', sample_freq=20480.0, show_plo
     df : Pandas dataframe
         Signal that is being normalized
 
-    max_val : int or float
-        Maximum value of the signal or dataset
+    y_name : str
+        Signal name (column name from dataframe) that will be used to generate
+        the FFT
 
-    min_val : int or float
-        Minimum value of the signal or dataset
+    sample_freq : float
+        Sampling frequency used to collect the signal
 
-    lower_norm_val : int or float
-        Lower value you want to normalize the data between (e.g. 0)
+    window : str --> 'hamming' else assumed 'kaiser'
+        Chose either the hamming or kaiser windowing function
 
-    upper_norm_val : int or float
-        Upper value you want to normalize the data between (e.g. 1)
+    beta : float
+        Used to determine shape of kaiser function. See scipy documentation
+        for additional details. 14 is good to start with.
 
     Returns
     ===========
     x : ndarray
-        Returns a new array that was been scaled between the upper_norm_val
-        and lower_norm_val values
+        Time (likely in seconds). Necessary for plotting time domain signals
+
+    y : ndarray
+        Time-domain signal (for example, the acceleration)
+
+    xf : ndarray
+        Frequency (likely in Hz). Necessary for plotting the frequency domain
+
+    yf : ndarry
+        Amplitude of FFT.
 
     """
 
@@ -88,4 +98,4 @@ def create_fft(df, x_name='Time', y_name='b2_ch3', sample_freq=20480.0, show_plo
         # plt.savefig('time_freq_domains.png', format='png', dpi=300,bbox_inches = "tight")
         plt.show()
     
-    return xf, yf
+    return x, y, xf, yf
