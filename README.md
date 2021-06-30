@@ -3,6 +3,14 @@ weibull-knowledge-informed
 
 Exploring the concept of knowledge-informed machine learning while predicting remaining-useful-ngs
 
+
+
+**Setup**
+
+From the home directory, run `pip install -e .` so that scripts have access to the `src` files.
+
+
+
 Project Organization
 ------------
 

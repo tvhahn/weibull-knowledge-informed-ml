@@ -18,4 +18,6 @@ dependencies:
   - seaborn
   - pandas
   - scikit-learn
+  - click
+  - python-dotenv
 
