@@ -1,7 +1,10 @@
 #!/bin/bash
 PROJECT_DIR=$1
 
-# move to raw data folder
+mkdir -p $PROJECT_DIR/data/raw/IMS
+mkdir -p $PROJECT_DIR/data/raw/FEMTO
+
+# move to the scratch folder to download data
 cd
 cd scratch/
 
@@ -17,12 +20,17 @@ else
     mkdir 3rd_test
     cd 4th_test
     mv txt/* ../3rd_test/
+    cp -r 1st_test $PROJECT_DIR/data/raw/IMS/1st_test
+    cp -r 2nd_test $PROJECT_DIR/data/raw/IMS/2nd_test
+    cp -r 3rd_test $PROJECT_DIR/data/raw/IMS/3rd_test
 
     cd
     cd scratch/bearing_data_temp/FEMTO
     unzip FEMTOBearingDataSet.zip
     unzip Training_set.zip
     unzip Test_set.zip
+    cp -r Learning_set $PROJECT_DIR/data/raw/FEMTO/Learning_set
+    cp -r Test_set $PROJECT_DIR/data/raw/FEMTO/Test_set
 
 fi
 
