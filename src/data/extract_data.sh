@@ -10,7 +10,7 @@ cd scratch/
 
 echo $PWD
 
-if [ ! -f bearing_data_temp ]; then
+if [ ! -d "bearing_data_temp" ]; then
     echo "Ensure data downloaded"
 else
     cd bearing_data_temp
