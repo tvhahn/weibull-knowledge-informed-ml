@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy import signal, fftpack
 
 
 def create_time_frequency_plot(
@@ -63,7 +64,6 @@ def create_time_frequency_plot(
         ax.grid(False)
 
     if save_plot:
-
         plt.savefig(save_name, dpi=dpi, bbox_inches="tight")
 
     plt.show()
@@ -76,11 +76,11 @@ def plot_freq_peaks(
     peak_height=0.0001,
     peak_distance=100,
     save_plot=False,
-    save_name="fft_peaks.svg",
+    save_name="fft_peaks.png",
     dpi=150,
 ):
-   """Create a frequency domain plot and show peaks with associate frequency
-    values.
+    """Create a frequency domain plot and show peaks with associated 
+    frequency values.
 
     Parameters
     ===========
@@ -123,7 +123,7 @@ def plot_freq_peaks(
     )
     axes.set_title("Frequency Domain", fontdict={"fontweight": "normal"})
     axes.set_xlabel("Frequency (Hz)")
-    axes.set_ylabel("Acceleration, g")
+    axes.set_ylabel("Amplitude")
     axes.yaxis.set_tick_params(labelleft=True, which="major")
     axes.grid(False)
 
@@ -146,4 +146,7 @@ def plot_freq_peaks(
         )
 
     plt.ticklabel_format(axis="y", style="sci", scilimits=(0, 0))
+    if save_plot:
+        plt.savefig(save_name, dpi=dpi, bbox_inches="tight")
+
     plt.show()

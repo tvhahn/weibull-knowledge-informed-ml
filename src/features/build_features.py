@@ -3,6 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import signal, fftpack
 import seaborn as sns
+import time
+import datetime
 
 
 def create_fft(df, y_name='b2_ch3', sample_freq=20480.0, window='hamming', beta=8.0):
@@ -66,3 +68,50 @@ def create_fft(df, y_name='b2_ch3', sample_freq=20480.0, window='hamming', beta=
     xf = np.linspace(0.0, 1.0 / (2.0 * T), N // 2)/2
 
     return x, y, xf, yf
+
+
+def build_spectrogram_df(folder, date_list, channel_name='b3_ch5', start_time='2003.10.22.12.06.24', col_day_increment=False,
+                         col_names = ['b1_ch1', 'b1_ch2', 'b2_ch3', 'b2_ch4', 'b3_ch5', 'b3_ch6', 'b4_ch7', 'b4_ch8']):
+    '''function that builds the spectrogram data'''
+    
+    # convert start_time to unix timestamp
+    start_time = time.mktime(datetime.datetime.strptime(start_time, "%Y.%m.%d.%H.%M.%S").timetuple())
+
+    # instantiate dataframe for the spectrogram
+    dft = pd.DataFrame()
+       
+    # dictionary to store any labels
+    labels_dict = {}
+
+    # iterate through each date that samples were taken
+    # date_list should be sorted from earliest to latest
+    for i, sample_name in enumerate(date_list):
+        # convert sample_name to unix timestamp
+        unix_timestamp = time.mktime(datetime.datetime.strptime(sample_name, "%Y.%m.%d.%H.%M.%S").timetuple())
+        date_nice_format = datetime.datetime.fromtimestamp(unix_timestamp).strftime('%Y-%m-%d %H:%M:%S') # reformat date
+
+        # open the file containing the measurements
+        df = pd.read_csv(folder / sample_name, sep='\t', names=col_names)
+
+        # create fft
+        x, y, xf, yf = create_fft(df, x_name='Time', y_name=channel_name, sample_freq=20480.0, show_plot=False, window='kaiser', beta=3)
+        # xf, yf = create_fft(df, x_name='Time', y_name=channel_name, sample_freq=20000.0, show_plot=False, window='kaiser', beta=3)
+
+        # change sample name slightly to change '.' to '_' (personal preference)
+        sample_name = sample_name.replace('.', '_')
+
+        # append the time increments
+        time_increment_seconds = unix_timestamp-start_time
+        time_increment_days = time_increment_seconds /(60 * 60 * 24)
+        
+        # create new column for the current sample_name FFT
+        if col_day_increment == False:
+            dft[date_nice_format] = yf
+        if col_day_increment == True:
+            dft[str(time_increment_days)] = yf
+
+        # create new dictionary key and values to store lable info
+        labels_dict[sample_name] = [date_nice_format, sample_name, unix_timestamp, time_increment_seconds, time_increment_days]
+
+    dft = dft.set_index(xf, drop=True) # index as frequency (Hz)
+    return dft, labels_dict
