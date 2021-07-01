@@ -8,6 +8,8 @@ mkdir -p $PROJECT_DIR/data/raw/FEMTO
 cd
 cd scratch/
 
+echo $PWD
+
 if [ ! -f "bearing_data_temp" ]; then
     echo "Ensure data downloaded"
 else
