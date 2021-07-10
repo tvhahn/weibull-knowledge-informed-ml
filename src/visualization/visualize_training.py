@@ -16,7 +16,7 @@ import torch.nn as nn
 Functions to visually inspect the models after they have been saved.
 """
 
-def plot_trained_model_results(
+def plot_trained_model_results_ims(
     df,
     net,
     x_train,
@@ -30,7 +30,6 @@ def plot_trained_model_results(
     device,
     date_time,
     save_path,
-    rul_or_percent="percent",
     loss_func="mse",
     batch_size=99999,
     epochs=99999,
@@ -394,7 +393,6 @@ def plot_trained_model_results_femto(
     device,
     date_time,
     save_path,
-    rul_or_percent="percent",
     loss_func="mse",
     batch_size=99999,
     epochs=99999,

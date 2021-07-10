@@ -59,7 +59,7 @@ train_ims:
 
 
 ## Train on FEMTO
-train_femto: train_femto
+train_femto:
 	$(PYTHON_INTERPRETER) src/models/train_models.py femto
 
 ## Delete all compiled Python files

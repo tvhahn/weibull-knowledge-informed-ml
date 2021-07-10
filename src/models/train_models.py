@@ -19,7 +19,7 @@ from src.data.data_utils import load_train_test_ims, load_train_test_femto
 from model import Net
 from loss import RMSELoss, RMSLELoss, WeibullLossRMSE, WeibullLossRMSLE, WeibullLossMSE
 import h5py
-from src.visualization.visualize_training import plot_trained_model_results, plot_trained_model_results_femto
+from src.visualization.visualize_training import plot_trained_model_results_ims, plot_trained_model_results_femto
 
 
 
@@ -28,14 +28,11 @@ from src.visualization.visualize_training import plot_trained_model_results, plo
 ###################
 
 # before random search
-RANDOM_SEARCH_ITERATIONS = 2
-EPOCHS = 10
+RANDOM_SEARCH_ITERATIONS = 1
+EPOCHS = 3
 PATIENCE = 2
 EARLY_STOP_DELAY = 0
 
-# train on RUL or percentage life
-# 'percent' or 'rul'
-RUL_OR_PERCENT = "percent"
 
 # need to set the scratch path to your own directory!
 scratch_path = Path('~/scratch/')
@@ -574,7 +571,7 @@ for i, param in enumerate(param_list):
 
         # plot the learning curves and save
         if DATASET_TYPE == "ims":
-            (epoch_stopped_on, results_dict) = plot_trained_model_results(
+            (epoch_stopped_on, results_dict) = plot_trained_model_results_ims(
                 df,
                 net,
                 x_train,
@@ -588,7 +585,6 @@ for i, param in enumerate(param_list):
                 device,
                 date_time,
                 folder_learning_curves,
-                rul_or_percent="percent",
                 loss_func=LOSS_FUNCTION,
                 batch_size=BATCH_SIZE,
                 epochs=EPOCHS,
@@ -653,7 +649,6 @@ for i, param in enumerate(param_list):
                 device,
                 date_time,
                 folder_learning_curves,
-                rul_or_percent="percent",
                 loss_func=LOSS_FUNCTION,
                 batch_size=BATCH_SIZE,
                 epochs=EPOCHS,
