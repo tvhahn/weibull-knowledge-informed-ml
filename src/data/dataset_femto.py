@@ -16,7 +16,7 @@ from data_utils import (
     create_date_dict,
 )
 
-from src.features.build_features import create_fft, build_spectrogram_df_femto
+from src.features.build_features import build_spectrogram_df_femto
 
 
 ###################
@@ -38,10 +38,39 @@ folder_raw_data_test = (
 BUCKET_SIZE = 64 # the bin size - number of features
 RANDOM_STATE = 694
 
-def create_ims_dataset():
+def create_femto_dataset(folder_raw_data_train, folder_raw_data_test, folder_processed_data, bucket_size=64, random_state=694):
+    """Create the PRONOSTIA (FEMTO) processed data, with appropriate train/val/test sets
+    
+    Parameters
+    ===========
+    folder_raw_data_train : pathlib object 
+        Location of raw training data, likely in ./data/raw/FEMTO/Training_set/Learning_set/
+
+    folder_raw_data_test : pathlib object 
+        Location of raw test data, likely in ./data/raw/FEMTO/Test_set/Test_set/
+
+    folder_processed_data : pathlib object
+        Location to store processed data (.h5py files). Likely ./data/processed/FEMTO/
+
+    bucket_size : int
+        The number of data points (from FFT spectrum) to include in each bin, or bucket.
+        For example, if we want 20 bins on the FEMTO data set, we should set the bucket
+        size to 64. The average, or max value, is taken from each bucket to make the 
+        final vector of size 20 for each time step (vector of 20 fed into neural network)
+
+    random_state : int
+        Number to reproduce the data split
+
+    Returns
+    ===========
+    A bunch of .h5py files, in the folder_processed_data, for each of the respective
+    train/validation/testing sets.
+
+    """
+    
     #!#!#!# TRAIN #!#!#!#
     # Bearing1_1
-    folder_indv_bearing = folder_raw_data / "Bearing1_1"
+    folder_indv_bearing = folder_raw_data_train / "Bearing1_1"
     date_dict = create_date_dict(folder_indv_bearing)
     df_spec, labels_dict = build_spectrogram_df_femto(
         folder_indv_bearing, date_dict, channel_name="acc_horz",
@@ -49,7 +78,7 @@ def create_ims_dataset():
 
     # create temp x, y
     x1_1, y1_1 = create_x_y(
-        df_spec, labels_dict, bucket_size=BUCKET_SIZE, print_shape=False
+        df_spec, labels_dict, bucket_size, print_shape=False
     )
     x_train = x1_1
     y_train = y1_1
@@ -58,7 +87,7 @@ def create_ims_dataset():
 
     ####
     # Bearing2_1
-    folder_indv_bearing = folder_raw_data / "Bearing2_1"
+    folder_indv_bearing = folder_raw_data_train / "Bearing2_1"
     date_dict = create_date_dict(folder_indv_bearing)
     df_spec, labels_dict = build_spectrogram_df_femto(
         folder_indv_bearing, date_dict, channel_name="acc_horz",
@@ -66,7 +95,7 @@ def create_ims_dataset():
 
     # create temp x, y
     x2_1, y2_1 = create_x_y(
-        df_spec, labels_dict, bucket_size=BUCKET_SIZE, print_shape=False
+        df_spec, labels_dict, bucket_size, print_shape=False
     )
     x_train = np.append(x_train, x2_1, 0)
     y_train = np.append(y_train, y2_1, 0)
@@ -75,7 +104,7 @@ def create_ims_dataset():
 
     ####
     # Bearing3_1
-    folder_indv_bearing = folder_raw_data / "Bearing3_1"
+    folder_indv_bearing = folder_raw_data_train / "Bearing3_1"
     date_dict = create_date_dict(folder_indv_bearing)
     df_spec, labels_dict = build_spectrogram_df_femto(
         folder_indv_bearing, date_dict, channel_name="acc_horz",
@@ -83,7 +112,7 @@ def create_ims_dataset():
 
     # create temp x, y
     x3_1, y3_1 = create_x_y(
-        df_spec, labels_dict, bucket_size=BUCKET_SIZE, print_shape=False
+        df_spec, labels_dict, bucket_size, print_shape=False
     )
     x_train = np.append(x_train, x3_1, 0)
     y_train = np.append(y_train, y3_1, 0)
@@ -94,7 +123,7 @@ def create_ims_dataset():
     ##############################################################
     #!#!#!# VAL #!#!#!#
     # Bearing1_2
-    folder_indv_bearing = folder_raw_data / "Bearing1_2"
+    folder_indv_bearing = folder_raw_data_train / "Bearing1_2"
     date_dict = create_date_dict(folder_indv_bearing)
     df_spec, labels_dict = build_spectrogram_df_femto(
         folder_indv_bearing, date_dict, channel_name="acc_horz",
@@ -102,7 +131,7 @@ def create_ims_dataset():
 
     # create temp x, y
     x1_2, y1_2 = create_x_y(
-        df_spec, labels_dict, bucket_size=BUCKET_SIZE, print_shape=False
+        df_spec, labels_dict, bucket_size, print_shape=False
     )
     x_val = x1_2
     y_val = y1_2
@@ -111,7 +140,7 @@ def create_ims_dataset():
 
     ####
     # Bearing2_2
-    folder_indv_bearing = folder_raw_data / "Bearing2_2"
+    folder_indv_bearing = folder_raw_data_train / "Bearing2_2"
     date_dict = create_date_dict(folder_indv_bearing)
     df_spec, labels_dict = build_spectrogram_df_femto(
         folder_indv_bearing, date_dict, channel_name="acc_horz",
@@ -119,7 +148,7 @@ def create_ims_dataset():
 
     # create temp x, y
     x2_2, y2_2 = create_x_y(
-        df_spec, labels_dict, bucket_size=BUCKET_SIZE, print_shape=False
+        df_spec, labels_dict, bucket_size, print_shape=False
     )
     x_val = np.append(x_val, x2_2, 0)
     y_val = np.append(y_val, y2_2, 0)
@@ -128,7 +157,7 @@ def create_ims_dataset():
 
     ####
     # Bearing3_2
-    folder_indv_bearing = folder_raw_data / "Bearing3_2"
+    folder_indv_bearing = folder_raw_data_train / "Bearing3_2"
     date_dict = create_date_dict(folder_indv_bearing)
     df_spec, labels_dict = build_spectrogram_df_femto(
         folder_indv_bearing, date_dict, channel_name="acc_horz",
@@ -136,7 +165,7 @@ def create_ims_dataset():
 
     # create temp x, y
     x3_2, y3_2 = create_x_y(
-        df_spec, labels_dict, bucket_size=BUCKET_SIZE, print_shape=False
+        df_spec, labels_dict, bucket_size, print_shape=False
     )
     x_val = np.append(x_val, x3_2, 0)
     y_val = np.append(y_val, y3_2, 0)
@@ -155,7 +184,7 @@ def create_ims_dataset():
 
     # create temp x, y
     x1_3, y1_3 = create_x_y(
-        df_spec, labels_dict, bucket_size=BUCKET_SIZE, print_shape=False
+        df_spec, labels_dict, bucket_size, print_shape=False
     )
     x_test = x1_3
     y_test = y1_3
@@ -172,7 +201,7 @@ def create_ims_dataset():
 
     # create temp x, y
     x2_3, y2_3 = create_x_y(
-        df_spec, labels_dict, bucket_size=BUCKET_SIZE, print_shape=False
+        df_spec, labels_dict, bucket_size, print_shape=False
     )
     x_test = np.append(x_test, x2_3, 0)
     y_test = np.append(y_test, y2_3, 0)
@@ -189,7 +218,7 @@ def create_ims_dataset():
 
     # create temp x, y
     x3_3, y3_3 = create_x_y(
-        df_spec, labels_dict, bucket_size=BUCKET_SIZE, print_shape=False
+        df_spec, labels_dict, bucket_size, print_shape=False
     )
     x_test = np.append(x_test, x3_3, 0)
     y_test = np.append(y_test, y3_3, 0)
@@ -227,8 +256,8 @@ def create_ims_dataset():
     #######
 
     # shuffle
-    x_train, y_train = shuffle(x_train, y_train, random_state=RANDOM_STATE)
-    x_val, y_val = shuffle(x_val, y_val, random_state=RANDOM_STATE)
+    x_train, y_train = shuffle(x_train, y_train, random_state)
+    x_val, y_val = shuffle(x_val, y_val, random_state)
 
     # scale
     min_val, max_val = get_min_max(x_train)
@@ -237,112 +266,112 @@ def create_ims_dataset():
 
     # create individual data sets for each run
     # so that we can easily trend the results
-    x_train1_1 = scaler(x1_1, min_val, max_val) # scale
+    x_train1_1 = scaler(x1_1, min_val, max_val) 
     y_train1_1 = y1_1
 
-    x_train2_1 = scaler(x2_1, min_val, max_val) # scale
+    x_train2_1 = scaler(x2_1, min_val, max_val) 
     y_train2_1 = y2_1
 
-    x_train3_1 = scaler(x3_1, min_val, max_val) # scale
+    x_train3_1 = scaler(x3_1, min_val, max_val) 
     y_train3_1 = y3_1
 
-    x_val1_2 = scaler(x1_2, min_val, max_val) # scale
+    x_val1_2 = scaler(x1_2, min_val, max_val) 
     y_val1_2 = y1_2
 
-    x_val2_2 = scaler(x2_2, min_val, max_val) # scale
+    x_val2_2 = scaler(x2_2, min_val, max_val) 
     y_val2_2 = y2_2
 
-    x_val3_2 = scaler(x3_2, min_val, max_val) # scale
+    x_val3_2 = scaler(x3_2, min_val, max_val) 
     y_val3_2 = y3_2
 
-    x_test1_3 = scaler(x1_3, min_val, max_val) # scale
+    x_test1_3 = scaler(x1_3, min_val, max_val) 
     y_test1_3 = y1_3
 
-    x_test2_3 = scaler(x2_3, min_val, max_val) # scale
+    x_test2_3 = scaler(x2_3, min_val, max_val) 
     y_test2_3 = y2_3
 
-    x_test3_3 = scaler(x3_3, min_val, max_val) # scale
+    x_test3_3 = scaler(x3_3, min_val, max_val) 
     y_test3_3 = y3_3
 
 
     ####
     # save as h5py files
     with h5py.File("x_train.hdf5", "w") as f:
-        dset = f.create_dataset("x_train", data=x_train)
+        dset = f.create_dataset(folder_processed_data / "x_train", data=x_train)
     with h5py.File("y_train.hdf5", "w") as f:
-        dset = f.create_dataset("y_train", data=y_train)
+        dset = f.create_dataset(folder_processed_data / "y_train", data=y_train)
 
     with h5py.File("x_val.hdf5", "w") as f:
-        dset = f.create_dataset("x_val", data=x_val)
+        dset = f.create_dataset(folder_processed_data / "x_val", data=x_val)
     with h5py.File("y_val.hdf5", "w") as f:
-        dset = f.create_dataset("y_val", data=y_val)
+        dset = f.create_dataset(folder_processed_data / "y_val", data=y_val)
 
     with h5py.File("x_test.hdf5", "w") as f:
-        dset = f.create_dataset("x_test", data=x_test)
+        dset = f.create_dataset(folder_processed_data / "x_test", data=x_test)
     with h5py.File("y_test.hdf5", "w") as f:
-        dset = f.create_dataset("y_test", data=y_test)
+        dset = f.create_dataset(folder_processed_data / "y_test", data=y_test)
 
     # save eta/beta
     with h5py.File("eta_beta_r.hdf5", "w") as f:
-        dset = f.create_dataset("eta_beta_r", data=eta_beta_r)
+        dset = f.create_dataset(folder_processed_data / "eta_beta_r", data=eta_beta_r)
 
     # save t_array
     with h5py.File("t_array.hdf5", "w") as f:
-        dset = f.create_dataset("t_array", data=t_array)
+        dset = f.create_dataset(folder_processed_data / "t_array", data=t_array)
 
     # Bearing1_1
     with h5py.File("x_train1_1.hdf5", "w") as f:
-        dset = f.create_dataset("x_train1_1", data=x_train1_1)
+        dset = f.create_dataset(folder_processed_data / "x_train1_1", data=x_train1_1)
     with h5py.File("y_train1_1.hdf5", "w") as f:
-        dset = f.create_dataset("y_train1_1", data=y_train1_1)
+        dset = f.create_dataset(folder_processed_data / "y_train1_1", data=y_train1_1)
 
     # Bearing2_1
     with h5py.File("x_train2_1.hdf5", "w") as f:
-        dset = f.create_dataset("x_train2_1", data=x_train2_1)
+        dset = f.create_dataset(folder_processed_data / "x_train2_1", data=x_train2_1)
     with h5py.File("y_train2_1.hdf5", "w") as f:
-        dset = f.create_dataset("y_train2_1", data=y_train2_1)
+        dset = f.create_dataset(folder_processed_data / "y_train2_1", data=y_train2_1)
 
     # Bearing3_1
     with h5py.File("x_train3_1.hdf5", "w") as f:
-        dset = f.create_dataset("x_train3_1", data=x_train3_1)
+        dset = f.create_dataset(folder_processed_data / "x_train3_1", data=x_train3_1)
     with h5py.File("y_train3_1.hdf5", "w") as f:
-        dset = f.create_dataset("y_train3_1", data=y_train3_1)
+        dset = f.create_dataset(folder_processed_data / "y_train3_1", data=y_train3_1)
 
     # Bearing1_2
     with h5py.File("x_val1_2.hdf5", "w") as f:
-        dset = f.create_dataset("x_val1_2", data=x_val1_2)
+        dset = f.create_dataset(folder_processed_data / "x_val1_2", data=x_val1_2)
     with h5py.File("y_val1_2.hdf5", "w") as f:
-        dset = f.create_dataset("y_val1_2", data=y_val1_2)
+        dset = f.create_dataset(folder_processed_data / "y_val1_2", data=y_val1_2)
 
     # Bearing2_2
     with h5py.File("x_val2_2.hdf5", "w") as f:
-        dset = f.create_dataset("x_val2_2", data=x_val2_2)
+        dset = f.create_dataset(folder_processed_data / "x_val2_2", data=x_val2_2)
     with h5py.File("y_val2_2.hdf5", "w") as f:
-        dset = f.create_dataset("y_val2_2", data=y_val2_2)
+        dset = f.create_dataset(folder_processed_data / "y_val2_2", data=y_val2_2)
 
     # Bearing3_2
     with h5py.File("x_val3_2.hdf5", "w") as f:
-        dset = f.create_dataset("x_val3_2", data=x_val3_2)
+        dset = f.create_dataset(folder_processed_data / "x_val3_2", data=x_val3_2)
     with h5py.File("y_val3_2.hdf5", "w") as f:
-        dset = f.create_dataset("y_val3_2", data=y_val3_2)
+        dset = f.create_dataset(folder_processed_data / "y_val3_2", data=y_val3_2)
 
     # Bearing1_3
     with h5py.File("x_test1_3.hdf5", "w") as f:
-        dset = f.create_dataset("x_test1_3", data=x_test1_3)
+        dset = f.create_dataset(folder_processed_data / "x_test1_3", data=x_test1_3)
     with h5py.File("y_test1_3.hdf5", "w") as f:
-        dset = f.create_dataset("y_test1_3", data=y_test1_3)
+        dset = f.create_dataset(folder_processed_data / "y_test1_3", data=y_test1_3)
 
     # Bearing2_3
     with h5py.File("x_test2_3.hdf5", "w") as f:
-        dset = f.create_dataset("x_test2_3", data=x_test2_3)
+        dset = f.create_dataset(folder_processed_data / "x_test2_3", data=x_test2_3)
     with h5py.File("y_test2_3.hdf5", "w") as f:
-        dset = f.create_dataset("y_test2_3", data=y_test2_3)
+        dset = f.create_dataset(folder_processed_data / "y_test2_3", data=y_test2_3)
 
     # Bearing3_3
     with h5py.File("x_test3_3.hdf5", "w") as f:
         dset = f.create_dataset("x_test3_3", data=x_test3_3)
-    with h5py.File("y_test3_3.hdf5", "w") as f:
-        dset = f.create_dataset("y_test3_3", data=y_test3_3)
+    with h5py.File(folder_processed_data / "y_test3_3.hdf5", "w") as f:
+        dset = f.create_dataset(folder_processed_data / "y_test3_3", data=y_test3_3)
 
 
 

@@ -145,7 +145,7 @@ def create_x_y(df_spec, labels_dict, bucket_size=1000, print_shape=False):
     return x, y
 
 
-def load_train_test(path):
+def load_train_test_ims(path):
     """Load the hdf5 files containing the train/val/test sets"""
 
     with h5py.File(path / "x_train.hdf5", "r") as f:

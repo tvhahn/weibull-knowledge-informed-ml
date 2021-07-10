@@ -26,7 +26,7 @@ RUL_OR_PERCENT = 'percent'
 BUCKET_SIZE = 500
 RANDOM_STATE = 694
 
-if True:
+def create_ims_dataset(folder_raw_data, bucket_size=500, random_state=694):
     #### TRAIN ####
     # 2nd RUN
     # For x_train, y_train
@@ -71,8 +71,8 @@ if True:
 
         
     # create the x-y for the train sets
-    x2, y2 = create_x_y(df_spec2, labels_dict2,  bucket_size=BUCKET_SIZE, print_shape=False)
-    x3, y3 = create_x_y(df_spec3, labels_dict3,  bucket_size=BUCKET_SIZE, print_shape=False)
+    x2, y2 = create_x_y(df_spec2, labels_dict2,  bucket_size, print_shape=False)
+    x3, y3 = create_x_y(df_spec3, labels_dict3,  bucket_size, print_shape=False)
     t2 = np.max(y2[:,0]) # get the run-time in days
     t3 = np.max(y3[:,0])
 
@@ -100,18 +100,18 @@ if True:
     x_train = np.append(x2, x3,0)
     y_train = np.append(y2, y3, 0)
 
-    x_val, y_val = create_x_y(df_spec1_3, labels_dict1_3,  bucket_size=BUCKET_SIZE)
+    x_val, y_val = create_x_y(df_spec1_3, labels_dict1_3,  bucket_size)
     x_val = x_val[1:]
     y_val = y_val[1:]
 
-    x_test, y_test = create_x_y(df_spec1_4, labels_dict1_4,  bucket_size=BUCKET_SIZE)
+    x_test, y_test = create_x_y(df_spec1_4, labels_dict1_4,  bucket_size)
     x_test = x_test[1:]
     y_test = y_test[1:]
 
     # shuffle
-    x_train, y_train = shuffle(x_train, y_train, random_state=RANDOM_STATE)
-    x_val, y_val = shuffle(x_val, y_val, random_state=RANDOM_STATE)
-    x_test, y_test = shuffle(x_test, y_test, random_state=RANDOM_STATE)
+    x_train, y_train = shuffle(x_train, y_train, random_state)
+    x_val, y_val = shuffle(x_val, y_val, random_state)
+    x_test, y_test = shuffle(x_test, y_test, random_state)
 
     # scale
     min_val, max_val = get_min_max(x_train)
