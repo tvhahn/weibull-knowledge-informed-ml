@@ -5,14 +5,16 @@ import matplotlib
 # https://stackoverflow.com/a/4706614/9214620
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from utils import test
+from src.models.utils import test
 import torch
 
 from sklearn.metrics import r2_score
-
-
-from loss import RMSELoss, RMSLELoss
+from src.models.loss import RMSELoss, RMSLELoss
 import torch.nn as nn
+
+"""
+Functions to visually inspect the models after they have been saved.
+"""
 
 def plot_trained_model_results(
     df,

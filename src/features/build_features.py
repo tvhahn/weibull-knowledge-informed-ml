@@ -92,7 +92,7 @@ def build_spectrogram_df_ims(
         "b4_ch8",
     ],
 ):
-    """function that builds the spectrogram data"""
+    """function that builds the spectrogram data for the IMS data"""
 
     # convert start_time to unix timestamp
     start_time = time.mktime(
@@ -161,7 +161,7 @@ def build_spectrogram_df_femto(
     col_day_increment=False,
     col_names=["hr", "min", "sec", "micro_sec", "acc_horz", "acc_vert"],
 ):
-    """function that builds the spectrogram data"""
+    """function that builds the spectrogram data for the PRONOSTIA (FEMTO) data"""
 
     # date_time list
     date_list = sorted(list(date_dict.keys()))

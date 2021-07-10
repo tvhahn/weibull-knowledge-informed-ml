@@ -15,11 +15,11 @@ from scipy.stats import uniform
 
 # import custom functions and classes
 from utils import EarlyStopping
-from src.data.data_utils import load_train_test, load_train_test_femto
+from src.data.data_utils import load_train_test_ims, load_train_test_femto
 from model import Net
 from loss import RMSELoss, RMSLELoss, WeibullLossRMSE, WeibullLossRMSLE, WeibullLossMSE
 import h5py
-from visualize_training import plot_trained_model_results, plot_trained_model_results_femto
+from src.visualization.visualize_training import plot_trained_model_results, plot_trained_model_results_femto
 
 
 
@@ -28,9 +28,9 @@ from visualize_training import plot_trained_model_results, plot_trained_model_re
 ###################
 
 # before random search
-RANDOM_SEARCH_ITERATIONS = 3000
-EPOCHS = 2000
-PATIENCE = 50
+RANDOM_SEARCH_ITERATIONS = 2
+EPOCHS = 10
+PATIENCE = 2
 EARLY_STOP_DELAY = 0
 
 # train on RUL or percentage life
@@ -38,7 +38,12 @@ EARLY_STOP_DELAY = 0
 RUL_OR_PERCENT = "percent"
 
 # need to set the scratch path to your own directory!
-scratch_path = Path('/home/tvhahn/scratch/')
+scratch_path = Path('~/scratch/')
+
+if scratch_path.exists():
+    print('scratc PATH!!!!')
+else:
+    print('no_scratch')
 
 # set random seed for parameter search
 if scratch_path.exists():
@@ -48,20 +53,24 @@ if scratch_path.exists():
     print("RANDOM_SEED_INPUT = ", RANDOM_SEED_INPUT)
 
     # set important folder locations
-    Path(f"/home/tvhahn/scratch/bearing").mkdir(parents=True, exist_ok=True)
-    Path(f"/home/tvhahn/scratch/bearing/learning_curves_{DATASET_TYPE}").mkdir(
+    Path(f"~/scratch/bearing_results").mkdir(parents=True, exist_ok=True)
+    Path(f"~/scratch/bearing_results/learning_curves_{DATASET_TYPE}").mkdir(
         parents=True, exist_ok=True
     )
-    Path(f"/home/tvhahn/scratch/bearing/results_csv_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
-    Path(f"/home/tvhahn/scratch/bearing/checkpoints_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
-    folder_path = Path("/home/tvhahn/scratch/bearing")
+    Path(f"~/scratch/bearing_results/results_csv_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
+    Path(f"~/scratch/bearing_results/checkpoints_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
+    folder_path = Path("~/scratch/bearing_results")
 
     print('#### FOLDER_PATH:', folder_path)
 
     if DATASET_TYPE == "ims":
-        folder_data = Path.cwd().parent / "data/processed/IMS/"
+        folder_data = Path.cwd() / "data/processed/IMS/"
     else:
-        folder_data = Path.cwd().parent / "data/processed/FEMTO/"
+        folder_data = Path.cwd().parent.parent / "data/processed/FEMTO/"
+
+    folder_results = Path(f"~/scratch/bearing_results/results_csv_{DATASET_TYPE}")
+    folder_checkpoints = Path(f"~/scratch/bearing_results/checkpoints_{DATASET_TYPE}")
+    folder_learning_curves = Path(f"~/scratch/bearing_results/learning_curves_{DATASET_TYPE}")
 
 else:
     # if not on HPC then on local comp
@@ -71,18 +80,24 @@ else:
 
     # set important folder locations
     folder_path = Path.cwd()
-    Path(folder_path / f"learning_curves_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
-    Path(folder_path / f"results_csv_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
-    Path(folder_path / f"checkpoints_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
+    print('folder_path -->', folder_path)
+    Path(folder_path / f"models/interim/learning_curves_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
+    Path(folder_path / f"models/interim/results_csv_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
+    Path(folder_path / f"models/interim/checkpoints_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
 
     print('#### FOLDER_PATH:', folder_path)
 
     # data folder
     if DATASET_TYPE == "ims":
-        folder_data = folder_path.parent / "data/processed/IMS/"
+        folder_data = folder_path / "data/processed/IMS/"
+        print("load IMS data", folder_data)
     else:
-        folder_data = folder_path.parent / "data/processed/FEMTO/"
-        print("load femto", folder_data)
+        folder_data = folder_path / "data/processed/FEMTO/"
+        print("load FEMTO data", folder_data)
+
+    folder_results = folder_path / f"models/interim/results_csv_{DATASET_TYPE}"
+    folder_checkpoints = folder_path / f"models/interim/checkpoints_{DATASET_TYPE}"
+    folder_learning_curves = folder_path / f"models/interim/learning_curves_{DATASET_TYPE}"
 
 ######################################
 # Define Parameters for Random Search
@@ -138,7 +153,7 @@ if DATASET_TYPE == "ims":
         y_train_2,
         x_train_3,
         y_train_3,
-    ) = load_train_test(folder_data)
+    ) = load_train_test_ims(folder_data)
 
     y_train_days = torch.reshape(y_train[:, 0], (-1, 1))
     y_val_days = torch.reshape(y_val[:, 0], (-1, 1))
@@ -352,8 +367,7 @@ def train(
         for i in range(0, len(x_train), batch_size):
 
             # create the batches and send to GPU (or CPU)
-            # I don't like how we don't shuffle the data before each epoch
-            # will have to look at the data-loader documentation and implement
+            # implement data loader in the future
             batch_x = x_train[i : i + batch_size].to(device)
             batch_y = y_train[i : i + batch_size].to(device)
             batch_y_days = y_train_days[i : i + batch_size].to(device)
@@ -555,7 +569,7 @@ for i, param in enumerate(param_list):
             eta=ETA,
             beta=BETA,
             early_stop_delay=EARLY_STOP_DELAY,
-            checkpoint_path=folder_path / f"checkpoints_{DATASET_TYPE}" / checkpoint_name,
+            checkpoint_path=folder_checkpoints / checkpoint_name,
         )
 
         # plot the learning curves and save
@@ -573,7 +587,7 @@ for i, param in enumerate(param_list):
                 y_val,
                 device,
                 date_time,
-                folder_path / f"learning_curves_{DATASET_TYPE}",
+                folder_learning_curves,
                 rul_or_percent="percent",
                 loss_func=LOSS_FUNCTION,
                 batch_size=BATCH_SIZE,
@@ -638,7 +652,7 @@ for i, param in enumerate(param_list):
                 y_val3_2,
                 device,
                 date_time,
-                folder_path / f"learning_curves_{DATASET_TYPE}",
+                folder_learning_curves,
                 rul_or_percent="percent",
                 loss_func=LOSS_FUNCTION,
                 batch_size=BATCH_SIZE,
@@ -689,8 +703,7 @@ for i, param in enumerate(param_list):
 
         # update csv of results
         df_results.to_csv(
-            folder_path
-            / f"results_csv_{DATASET_TYPE}"
+            folder_results
             / f"results_{date_results}_{RANDOM_SEED_INPUT}.csv",
             index=False,
         )

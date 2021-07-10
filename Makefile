@@ -52,6 +52,16 @@ endif
 data: requirements
 	$(PYTHON_INTERPRETER) src/data/make_dataset.py data/raw data/processed
 
+
+## Train on IMS
+train_ims: 
+	$(PYTHON_INTERPRETER) src/models/train_models.py ims
+
+
+## Train on FEMTO
+train_femto: train_femto
+	$(PYTHON_INTERPRETER) src/models/train_models.py femto
+
 ## Delete all compiled Python files
 clean:
 	find . -type f -name "*.py[co]" -delete
