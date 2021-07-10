@@ -65,9 +65,9 @@ if scratch_path.exists():
     else:
         folder_data = Path.cwd().parent.parent / "data/processed/FEMTO/"
 
-    folder_results = Path(f"~/scratch/bearing_results/results_csv_{DATASET_TYPE}")
-    folder_checkpoints = Path(f"~/scratch/bearing_results/checkpoints_{DATASET_TYPE}")
-    folder_learning_curves = Path(f"~/scratch/bearing_results/learning_curves_{DATASET_TYPE}")
+    folder_results = Path(scratch_path / f"weibull_results/results_csv_{DATASET_TYPE}")
+    folder_checkpoints = Path(scratch_path / f"weibull_results/checkpoints_{DATASET_TYPE}")
+    folder_learning_curves = Path(scratch_path / f"weibull_results/learning_curves_{DATASET_TYPE}")
 
 else:
     # if not on HPC then on local comp
