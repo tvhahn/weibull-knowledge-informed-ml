@@ -35,7 +35,7 @@ EARLY_STOP_DELAY = 0
 
 
 # need to set the scratch path to your own directory!
-scratch_path = Path('~/scratch/')
+scratch_path = Path.home() / 'scratch'
 
 if scratch_path.exists():
     print('scratc PATH!!!!')
@@ -50,13 +50,13 @@ if scratch_path.exists():
     print("RANDOM_SEED_INPUT = ", RANDOM_SEED_INPUT)
 
     # set important folder locations
-    Path(f"~/scratch/bearing_results").mkdir(parents=True, exist_ok=True)
-    Path(f"~/scratch/bearing_results/learning_curves_{DATASET_TYPE}").mkdir(
+    Path(scratch_path / "weibull_results").mkdir(parents=True, exist_ok=True)
+    Path(scratch_path / f"weibull_results/learning_curves_{DATASET_TYPE}").mkdir(
         parents=True, exist_ok=True
     )
-    Path(f"~/scratch/bearing_results/results_csv_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
-    Path(f"~/scratch/bearing_results/checkpoints_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
-    folder_path = Path("~/scratch/bearing_results")
+    Path(scratch_path / f"weibull_results/results_csv_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
+    Path(scratch_path / f"weibull_results/checkpoints_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
+    folder_path = scratch_path / "weibull_results"
 
     print('#### FOLDER_PATH:', folder_path)
 
