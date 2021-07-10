@@ -75,7 +75,7 @@ def create_fft(
     return x, y, xf, yf
 
 
-def build_spectrogram_df(
+def build_spectrogram_df_ims(
     folder,
     date_list,
     channel_name="b3_ch5",
@@ -122,14 +122,11 @@ def build_spectrogram_df(
         # create fft
         x, y, xf, yf = create_fft(
             df,
-            x_name="Time",
             y_name=channel_name,
             sample_freq=20480.0,
-            show_plot=False,
             window="kaiser",
             beta=3,
         )
-        # xf, yf = create_fft(df, x_name='Time', y_name=channel_name, sample_freq=20000.0, show_plot=False, window='kaiser', beta=3)
 
         # change sample name slightly to change '.' to '_' (personal preference)
         sample_name = sample_name.replace(".", "_")
@@ -186,16 +183,13 @@ def build_spectrogram_df_femto(
         df = pd.read_csv(folder / date_dict[unix_timestamp][2], names=col_names)
 
         # create fft
-        xf, yf = create_fft(
+        x, y, xf, yf = create_fft(
             df,
-            x_name="Time",
             y_name=channel_name,
             sample_freq=25600.0,
-            show_plot=False,
             window="kaiser",
             beta=3,
         )
-        # xf, yf = create_fft(df, x_name='Time', y_name=channel_name, sample_freq=20000.0, show_plot=False, window='kaiser', beta=3)
 
         # append the time increments
         time_increment_seconds = unix_timestamp - start_time

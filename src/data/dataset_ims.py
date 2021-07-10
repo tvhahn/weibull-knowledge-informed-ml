@@ -9,24 +9,50 @@ import h5py
 from sklearn.utils import shuffle
 
 # import custom functions and classes
-from data_utils import get_min_max, scaler, create_fft, build_spectrogram_df, create_x_y
+from data_utils import (
+    get_min_max,
+    scaler,
+    create_x_y,
+    create_date_dict,
+)
+
+from src.features.build_features import build_spectrogram_df_ims
 
 
 ###################
 # Create Data Set
 ###################
 
-# set the root (parent folder) and the data folder locations
-folder_root = Path.cwd().parent # get root folder of repository
 
-folder_raw_data = folder_root / 'data/raw/IMS/' # raw data folder
+def create_ims_dataset(folder_raw_data, folder_processed_data, bucket_size=500, random_state_int=694):
+    """Create the IMS processed data, with appropriate train/val/test sets
+    
+    Parameters
+    ===========
+    folder_raw_data : pathlib object 
+        Location of raw data, both train and test, likely ./data/raw/IMS/
 
-# Constants
-RUL_OR_PERCENT = 'percent'
-BUCKET_SIZE = 500
-RANDOM_STATE = 694
+    folder_processed_data : pathlib object
+        Location to store processed data (.h5py files). Likely ./data/processed/IMS/
 
-def create_ims_dataset(folder_raw_data, bucket_size=500, random_state=694):
+    bucket_size : int
+        The number of data points (from FFT spectrum) to include in each bin, or bucket.
+        For example, if we want 20 bins on the IMS data set, we should set the bucket
+        size to 500. The average, or max value, is taken from each bucket to make the 
+        final vector of size 20 for each time step (vector of 20 fed into neural network)
+
+    random_state_int : int
+        Number to reproduce the data split
+
+    Returns
+    ===========
+    A bunch of .h5py files, in the folder_processed_data, for each of the respective
+    train/validation/testing sets.
+
+    """
+
+    print('IMS data prep start.')
+
     #### TRAIN ####
     # 2nd RUN
     # For x_train, y_train
@@ -34,7 +60,7 @@ def create_ims_dataset(folder_raw_data, bucket_size=500, random_state=694):
     folder_2nd = folder_raw_data / '2nd_test'
     date_list2 = sorted(os.listdir(folder_2nd))
     col_names = ['b1_ch1', 'b2_ch2', 'b3_ch3', 'b4_ch4']
-    df_spec2, labels_dict2 = build_spectrogram_df(folder_2nd, date_list2, channel_name='b1_ch1', start_time=date_list2[0], col_names=col_names)
+    df_spec2, labels_dict2 = build_spectrogram_df_ims(folder_2nd, date_list2, channel_name='b1_ch1', start_time=date_list2[0], col_names=col_names)
     print('created spectrogram for b1_ch1')
     ####
 
@@ -44,7 +70,7 @@ def create_ims_dataset(folder_raw_data, bucket_size=500, random_state=694):
     folder_3rd = folder_raw_data / '3rd_test'
     date_list3 = sorted(os.listdir(folder_3rd))
     col_names = ['b1_ch1', 'b2_ch2', 'b3_ch3', 'b4_ch4']
-    df_spec3, labels_dict3 = build_spectrogram_df(folder_3rd, date_list3, channel_name='b3_ch3', start_time=date_list3[0], col_names=col_names)
+    df_spec3, labels_dict3 = build_spectrogram_df_ims(folder_3rd, date_list3, channel_name='b3_ch3', start_time=date_list3[0], col_names=col_names)
     print('created spectrogram for b3_ch3')
     ####
 
@@ -55,7 +81,7 @@ def create_ims_dataset(folder_raw_data, bucket_size=500, random_state=694):
     folder_1st = folder_raw_data / '1st_test'
     date_list1 = sorted(os.listdir(folder_1st))
     col_names = ['b1_ch1', 'b1_ch2', 'b2_ch3', 'b2_ch4', 'b3_ch5','b3_ch6', 'b4_ch7', 'b4_ch8']
-    df_spec1_3, labels_dict1_3 = build_spectrogram_df(folder_1st, date_list1, channel_name='b3_ch5', start_time=date_list1[0], col_names=col_names)
+    df_spec1_3, labels_dict1_3 = build_spectrogram_df_ims(folder_1st, date_list1, channel_name='b3_ch5', start_time=date_list1[0], col_names=col_names)
     print('created spectrogram for b3_ch6')
 
     #### TEST ####
@@ -65,7 +91,7 @@ def create_ims_dataset(folder_raw_data, bucket_size=500, random_state=694):
     folder_1st = folder_raw_data / '1st_test'
     date_list1 = sorted(os.listdir(folder_1st))
     col_names = ['b1_ch1', 'b1_ch2', 'b2_ch3', 'b2_ch4', 'b3_ch5','b3_ch6', 'b4_ch7', 'b4_ch8']
-    df_spec1_4, labels_dict1_4 = build_spectrogram_df(folder_1st, date_list1, channel_name='b4_ch7', start_time=date_list1[0], col_names=col_names)
+    df_spec1_4, labels_dict1_4 = build_spectrogram_df_ims(folder_1st, date_list1, channel_name='b4_ch7', start_time=date_list1[0], col_names=col_names)
     print('created spectrogram for b4_ch8')
     ####
 
@@ -109,9 +135,9 @@ def create_ims_dataset(folder_raw_data, bucket_size=500, random_state=694):
     y_test = y_test[1:]
 
     # shuffle
-    x_train, y_train = shuffle(x_train, y_train, random_state)
-    x_val, y_val = shuffle(x_val, y_val, random_state)
-    x_test, y_test = shuffle(x_test, y_test, random_state)
+    x_train, y_train = shuffle(x_train, y_train, random_state=random_state_int)
+    x_val, y_val = shuffle(x_val, y_val, random_state=random_state_int)
+    x_test, y_test = shuffle(x_test, y_test, random_state=random_state_int)
 
     # scale
     min_val, max_val = get_min_max(x_train)
@@ -133,40 +159,40 @@ def create_ims_dataset(folder_raw_data, bucket_size=500, random_state=694):
 
 
 
-    with h5py.File("x_train.hdf5", "w") as f:
+    with h5py.File(folder_processed_data / "x_train.hdf5", "w") as f:
         dset = f.create_dataset("x_train", data=x_train)
-    with h5py.File("y_train.hdf5", "w") as f:
+    with h5py.File(folder_processed_data / "y_train.hdf5", "w") as f:
         dset = f.create_dataset("y_train", data=y_train)
 
-    with h5py.File("x_val.hdf5", "w") as f:
+    with h5py.File(folder_processed_data / "x_val.hdf5", "w") as f:
         dset = f.create_dataset("x_val", data=x_val)
-    with h5py.File("y_val.hdf5", "w") as f:
+    with h5py.File(folder_processed_data / "y_val.hdf5", "w") as f:
         dset = f.create_dataset("y_val", data=y_val)
 
-    with h5py.File("x_test.hdf5", "w") as f:
+    with h5py.File(folder_processed_data / "x_test.hdf5", "w") as f:
         dset = f.create_dataset("x_test", data=x_test)
-    with h5py.File("y_test.hdf5", "w") as f:
+    with h5py.File(folder_processed_data / "y_test.hdf5", "w") as f:
         dset = f.create_dataset("y_test", data=y_test)
 
     # save eta/beta
-    with h5py.File("eta_beta_r.hdf5", "w") as f:
+    with h5py.File(folder_processed_data / "eta_beta_r.hdf5", "w") as f:
         dset = f.create_dataset("eta_beta_r", data=eta_beta_r)
 
     # save t_array
-    with h5py.File("t_array.hdf5", "w") as f:
+    with h5py.File(folder_processed_data / "t_array.hdf5", "w") as f:
         dset = f.create_dataset("t_array", data=t_array)
 
 
     # second run
-    with h5py.File("x_train_2.hdf5", "w") as f:
+    with h5py.File(folder_processed_data / "x_train_2.hdf5", "w") as f:
         dset = f.create_dataset("x_train_2", data=x_train_2)
-    with h5py.File("y_train_2.hdf5", "w") as f:
+    with h5py.File(folder_processed_data / "y_train_2.hdf5", "w") as f:
         dset = f.create_dataset("y_train_2", data=y_train_2)
 
     # third run
-    with h5py.File("x_train_3.hdf5", "w") as f:
+    with h5py.File(folder_processed_data / "x_train_3.hdf5", "w") as f:
         dset = f.create_dataset("x_train_3", data=x_train_3)
-    with h5py.File("y_train_3.hdf5", "w") as f:
+    with h5py.File(folder_processed_data / "y_train_3.hdf5", "w") as f:
         dset = f.create_dataset("y_train_3", data=y_train_3)
   
 

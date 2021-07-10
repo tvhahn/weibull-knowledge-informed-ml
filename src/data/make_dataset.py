@@ -4,6 +4,9 @@ import logging
 from pathlib import Path
 import numpy as np
 
+from src.data.dataset_femto import create_femto_dataset
+from src.data.dataset_ims import create_ims_dataset
+
 
 
 @click.command()
@@ -18,24 +21,30 @@ def main(input_filepath, output_filepath):
 
     # input file paths for FEMTO (PRONOSTIA) and IMS data sets
     folder_raw_data_train_femto = (
-        input_filepath / "FEMTO/Training_set/Learning_set/"
+        root_dir / input_filepath / "FEMTO/Learning_set/"
     ) 
 
     folder_raw_data_test_femto = (
-        input_filepath / "FEMTO/Test_set/Test_set/"
+        root_dir / input_filepath / "FEMTO/Test_set/"
     )
 
     folder_raw_data_ims = (
-        input_filepath / "IMS/"
+        root_dir / input_filepath / "IMS/"
     )
 
     # processed data file paths
-    folder_processed_data_femto = (output_filepath / 'FEMTO/')
-    folder_processed_data_ims = (output_filepath / 'IMS/')
+    folder_processed_data_femto = (root_dir / output_filepath / 'FEMTO/')
+    folder_processed_data_ims = (root_dir / output_filepath / 'IMS/')
 
     # make processed directories if not exist
     folder_processed_data_femto.mkdir(parents=True, exist_ok=True)
     folder_processed_data_ims.mkdir(parents=True, exist_ok=True)
+
+    create_femto_dataset(folder_raw_data_train_femto, folder_raw_data_test_femto, 
+    folder_processed_data_femto, bucket_size=64, random_state_int=694)
+
+    create_ims_dataset(folder_raw_data_ims, folder_processed_data_ims, 
+    bucket_size=500, random_state_int=694)
 
 
 if __name__ == '__main__':
