@@ -19,5 +19,5 @@ dependencies:
   - pandas
   - scikit-learn
   - click
-  - python-dotenv
+  - h5py 
 
