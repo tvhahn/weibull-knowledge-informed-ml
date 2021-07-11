@@ -33,10 +33,9 @@ EPOCHS = 3
 PATIENCE = 2
 EARLY_STOP_DELAY = 0
 
-
-# need to set the scratch path to your own directory!
+# check if "scratch" path exists in the home directory
+# if it does, assume we are on HPC
 scratch_path = Path.home() / 'scratch'
-
 if scratch_path.exists():
     print('Assume on HPC')
 else:

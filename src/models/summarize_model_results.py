@@ -26,6 +26,7 @@ from pathlib import Path
 import fnmatch
 import os
 import shutil
+import sys
 
 from scipy.stats import pointbiserialr
 
@@ -38,10 +39,53 @@ Filter out poorly performing models and save the final result csv's in the model
 Save the top performing models also in the models/final folder.
 """
 
-# set the folder location of the temporary results
-root_dir = Path.cwd()
-print(root_dir)
-temp_dir = root_dir / 'models/interim/results_csv_ims'
+#####
+# Set Parameters
+SAVE_ENTIRE_CSV = False # if you want to save the entire CSV, before filtering
+ADD_TEST_RESULTS = True # if you want to append the test results
+
+#####
+
+# check if "scratch" path exists in the home directory
+# if it does, assume we are on HPC
+scratch_path = Path.home() / 'scratch'
+
+DATASET_TYPE = str(sys.argv[1])  # 'ims' or 'femto'
+
+# set the default directories
+if scratch_path.exists():
+    # set important folder locations
+    print('Assume on HPC')
+    root_dir = Path.cwd()
+    print('#### Root dir:', root_dir)
+
+    if DATASET_TYPE == "ims":
+        folder_data = Path.cwd() / "data/processed/IMS/"
+    else:
+        folder_data = Path.cwd() / "data/processed/FEMTO/"
+
+    folder_results = Path(scratch_path / f"weibull_results/results_csv_{DATASET_TYPE}")
+    folder_checkpoints = Path(scratch_path / f"weibull_results/checkpoints_{DATASET_TYPE}")
+    folder_learning_curves = Path(scratch_path / f"weibull_results/learning_curves_{DATASET_TYPE}")
+
+else:
+    # set important folder locations
+    print('Assume on local compute')
+    root_dir = Path.cwd()
+    print('#### Root dir:', root_dir)
+
+    # data folder
+    if DATASET_TYPE == "ims":
+        folder_data = root_dir / "data/processed/IMS/"
+        print("load IMS data", folder_data)
+    else:
+        folder_data = root_dir / "data/processed/FEMTO/"
+        print("load FEMTO data", folder_data)
+
+    folder_results = root_dir / f"models/interim/results_csv_{DATASET_TYPE}"
+    folder_checkpoints = root_dir / f"models/interim/checkpoints_{DATASET_TYPE}"
+    folder_learning_curves = root_dir / f"models/interim/learning_curves_{DATASET_TYPE}"
+
 
 # use multi-processing to load all the CSVs into one file
 # https://stackoverflow.com/a/36590187
@@ -55,7 +99,7 @@ def main(folder_path):
 
     # get a list of file names
     files = os.listdir(folder_path)
-    file_list = [temp_dir / filename for filename in files if filename.endswith('.csv')]
+    file_list = [folder_results / filename for filename in files if filename.endswith('.csv')]
 
     # set up your pool
     with Pool(processes=7) as pool: # or whatever your hardware can support
@@ -70,7 +114,7 @@ def main(folder_path):
         
 
 if __name__ == '__main__':
-    df = main(temp_dir)
+    df = main(folder_results)
     
 # drop first column
 try:
@@ -95,55 +139,53 @@ df.to_csv(csv_save_name, index=False)
 print('Final df shape:',df.shape)
 
 #### append test results to df ####
-ADD_TEST_RESULTS = True # True or False
-
 if ADD_TEST_RESULTS:
-    folder_path = root_dir / 'data/processed/IMS/'
 
-    (
-        x_train,
-        y_train,
-        x_val,
-        y_val,
-        x_test,
-        y_test,
-        x_train_2,
-        y_train_2,
-        x_train_3,
-        y_train_3,
-    ) = load_train_test_ims(folder_path)
-    
-    
-#     (
-#         x_train,
-#         y_train,
-#         x_val,
-#         y_val,
-#         x_test,
-#         y_test,
-#         x_train1_1,
-#         y_train1_1,
-#         x_train2_1,
-#         y_train2_1,
-#         x_train3_1,
-#         y_train3_1,
-#         x_val1_2,
-#         y_val1_2,
-#         x_val2_2,
-#         y_val2_2,
-#         x_val3_2,
-#         y_val3_2,
-#         x_test1_3,
-#         y_test1_3,
-#         x_test2_3,
-#         y_test2_3,
-#         x_test3_3,
-#         y_test3_3,
-#     ) = load_train_test_femto(folder_path)
+    if DATASET_TYPE == "ims":
+        (
+            x_train,
+            y_train,
+            x_val,
+            y_val,
+            x_test,
+            y_test,
+            x_train_2,
+            y_train_2,
+            x_train_3,
+            y_train_3,
+        ) = load_train_test_ims(folder_data)
+        
+    else:
+        (
+            x_train,
+            y_train,
+            x_val,
+            y_val,
+            x_test,
+            y_test,
+            x_train1_1,
+            y_train1_1,
+            x_train2_1,
+            y_train2_1,
+            x_train3_1,
+            y_train3_1,
+            x_val1_2,
+            y_val1_2,
+            x_val2_2,
+            y_val2_2,
+            x_val3_2,
+            y_val3_2,
+            x_test1_3,
+            y_test1_3,
+            x_test2_3,
+            y_test2_3,
+            x_test3_3,
+            y_test3_3,
+        ) = load_train_test_femto(folder_data)
 
 
     # load beta, eta for Weibull CDF
-    with h5py.File(folder_path / "eta_beta_r.hdf5", "r") as f:
+    with h5py.File(folder_data / "eta_beta_r.hdf5", "r") as f:
         eta_beta_r = f["eta_beta_r"][:]
 
     ETA = eta_beta_r[0]
@@ -164,11 +206,8 @@ if ADD_TEST_RESULTS:
     y_train_2 = torch.reshape(y_train_2[:, 1], (-1, 1))
     y_train_3 = torch.reshape(y_train_3[:, 1], (-1, 1))
     
-    model_folder = root_dir / 'models/interim/checkpoints_ims/'
-    print(model_folder)
-
     # append test results onto results dataframe
-    df_results = test_metrics_to_results_df(model_folder, df, x_test, y_test)
+    df_results = test_metrics_to_results_df(folder_checkpoints, df, x_test, y_test)
     
     standard_losses = ['mse', 'rmse', 'rmsle']
 
