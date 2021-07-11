@@ -40,9 +40,16 @@ Save the top performing models also in the models/final folder.
 """
 
 #####
-# Set Parameters
+# General Parameters
 SAVE_ENTIRE_CSV = False # if you want to save the entire CSV, before filtering
 ADD_TEST_RESULTS = True # if you want to append the test results
+
+# Filter parameters
+R2_BOUND = 0.2 # greater than
+RMSE_BOUND = 0.35 # less than
+SORT_BY = 'r2_test' # metric used to evaluate results
+                    # options include: 'loss_rmse_test', 'r2_val'
+                    # 'r2_test_avg', etc.
 
 #####
 
@@ -132,11 +139,9 @@ df['date_time_seed'] = df['date_time'].astype(str)+'_'+df['rnd_seed_input'].asty
 # get name that model checkpoint was saved under
 df['model_checkpoint_name'] = df['date_time'].astype(str)+'_'+df['loss_func'] +'_'+df['rnd_seed_input'].astype(str)+'.pt'
 
-# move 'date_time_seed' to front
-# df = df[[list(df).pop()] + list(df)[:-1]]
 
-df.to_csv(csv_save_name, index=False)
-print('Final df shape:',df.shape)
+if SAVE_ENTIRE_CSV:
+    df.to_csv(root_dir / 'models/final' / f'results_summary_{DATASET_TYPE}_all.csv', index=False)
 
 #### append test results to df ####
 if ADD_TEST_RESULTS:
@@ -207,30 +212,87 @@ if ADD_TEST_RESULTS:
     y_train_3 = torch.reshape(y_train_3[:, 1], (-1, 1))
     
     # append test results onto results dataframe
-    df_results = test_metrics_to_results_df(folder_checkpoints, df, x_test, y_test)
+    dfr = test_metrics_to_results_df(folder_checkpoints, df, x_test, y_test)
     
     standard_losses = ['mse', 'rmse', 'rmsle']
 
     # apply 0 or 1 for weibull, and for each unique loss func
-    for index, value in df_results['loss_func'].items():
+    for index, value in dfr['loss_func'].items():
         if value in standard_losses:
-            df_results.loc[index, 'weibull_loss'] = 0
+            dfr.loc[index, 'weibull_loss'] = 0
         else:
-            df_results.loc[index, 'weibull_loss'] = 1
+            dfr.loc[index, 'weibull_loss'] = 1
 
     # convert to 'weibull_loss' column to integer
-    df_results['weibull_loss'] = df_results['weibull_loss'].astype(int)
+    dfr['weibull_loss'] = dfr['weibull_loss'].astype(int)
 
 
-    loss_func_list = df_results['loss_func'].unique()
+    loss_func_list = dfr['loss_func'].unique()
 
-    for index, value in df_results['loss_func'].items():
+    for index, value in dfr['loss_func'].items():
         for loss_func in loss_func_list:
-            df_results.loc[index, value] = 1
+            dfr.loc[index, value] = 1
 
-    df_results[loss_func_list] = df_results[loss_func_list].fillna(0, downcast='infer')
+    dfr[loss_func_list] = dfr[loss_func_list].fillna(0, downcast='infer')
     
+    if SAVE_ENTIRE_CSV:
+        dfr.to_csv(root_dir / 'models/final' / f'results_summary_{DATASET_TYPE}_all.csv', index=False)
+ 
+# how many unique model architectures?
+print('No. unique model architectures:', len(dfr['date_time_seed'].unique()))
+print('No. unique models (includes unique loss functions):', len(dfr['date_time_seed']))
+
+
+##### Filter resutls and select top models #####
+loss_func_list = dfr['loss_func'].unique()
+
+sort_by = SORT_BY
+
+dfr = dfr[(dfr['r2_test']>R2_BOUND) & 
+         (dfr['loss_rmse_test']<RMSE_BOUND) &
+         (dfr['r2_train']>R2_BOUND) &
+         (dfr['loss_rmse_train']<RMSE_BOUND) &
+         (dfr['r2_val']>R2_BOUND) & 
+         (dfr['loss_rmse_val']<RMSE_BOUND) &
+         (dfr['beta']==2.0)
+][:]
+
+dfr = dfr.groupby(['date_time_seed']).apply(lambda x: x.sort_values([sort_by], ascending = False)).reset_index(drop=True)
+dfr = dfr.groupby(['date_time_seed']).head(1).sort_values(by=sort_by, ascending=False)
+
+# save filtered results csv
+dfr.to_csv(root_dir / 'models/final' / f'results_filtered_{DATASET_TYPE}.csv', index=False)
+
+
+# count up how often each loss functions type appears as a top performer
+def change_loss_func_name(cols):
+    loss_func = cols[0]
     
-    df_results.to_csv('combined_results_2021.04.05_1_with_test.csv', index=False)
-    
-print(df.head())
+    if loss_func == 'mse':
+        return 'MSE'
+    elif loss_func == 'rmse':
+        return 'RMSE'
+    elif loss_func == 'rmsle':
+        return 'RMSLE'
+    elif loss_func == 'weibull_mse':
+        return 'Weibull-MSE\nCombined'
+    elif loss_func == 'weibull_rmse':
+        return 'Weibull-RMSE\nCombined'
+    elif loss_func == 'weibull_rmsle':
+        return 'Weibull-RMSLE\nCombined'
+    elif loss_func == 'weibull_only_mse':
+        return 'Weibull Only MSE'
+    elif loss_func == 'weibull_only_rmse':
+        return 'Weibull Only RMSE'
+    else:
+        return 'Weibull Only RMLSE'    
+
+df_count = dfr.groupby(['loss_func'], as_index=False).count()[['loss_func', 'date_time']].rename(columns={'date_time':'count'}).sort_values(by='count',ascending=False)
+df_count['loss_func2'] = df_count[['loss_func']].apply(change_loss_func_name, axis=1)
+df_count = df_count.drop('loss_func', axis=1)
+df_count = df_count.rename(columns={'loss_func2':'loss_func'})
+df_count['count'] = df_count['count'].astype(float)
+df_count['percent'] = 100 * df_count['count'] / df_count['count'].sum()
+
+# save csv so we can use it later to create charts with
+df_count.to_csv(root_dir / 'models/final' / f'{DATASET_TYPE}_count_results.csv', index=False)

@@ -65,7 +65,7 @@ train_femto:
 
 ## Gather the IMS models and generate summaries of the model results
 summarize_ims_models:
-	$(PYTHON_INTERPRETER) src/models/summarize_model_results.py femto
+	$(PYTHON_INTERPRETER) src/models/summarize_model_results.py ims
 
 
 ## Delete all compiled Python files
