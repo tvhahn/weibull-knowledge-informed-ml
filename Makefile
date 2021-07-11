@@ -62,6 +62,12 @@ train_ims:
 train_femto:
 	$(PYTHON_INTERPRETER) src/models/train_models.py femto
 
+
+## Gather the IMS models and generate summaries of the model results
+summarize_ims_models:
+	$(PYTHON_INTERPRETER) src/models/summarize_model_results.py femto
+
+
 ## Delete all compiled Python files
 clean:
 	find . -type f -name "*.py[co]" -delete
