@@ -38,9 +38,9 @@ EARLY_STOP_DELAY = 0
 scratch_path = Path.home() / 'scratch'
 
 if scratch_path.exists():
-    print('scratc PATH!!!!')
+    print('Assume on HPC')
 else:
-    print('no_scratch')
+    print('Assume on local compute')
 
 # set random seed for parameter search
 if scratch_path.exists():

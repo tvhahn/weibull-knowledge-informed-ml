@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from loss import RMSELoss, RMSLELoss
+from src.models.loss import RMSELoss, RMSLELoss
 from sklearn.metrics import r2_score
 import pandas as pd
 
@@ -170,7 +170,7 @@ def test_metrics_to_results_df(model_folder, df_results, x_test, y_test, ):
     df_temp = pd.DataFrame()
 
     for i, r in df_results.iterrows():
-        model_name = r['date_time']+'_'+r['loss_func']+'_'+str(r['rnd_seed_input'])+'.pt'
+        model_name = r['model_checkpoint_name']
 
         if i % 200 == 0:
             print('model no. ', i)
