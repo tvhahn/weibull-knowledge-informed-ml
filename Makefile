@@ -68,6 +68,10 @@ summarize_ims_models:
 	$(PYTHON_INTERPRETER) src/models/summarize_model_results.py ims
 
 
+summarize_femto_models:
+	$(PYTHON_INTERPRETER) src/models/summarize_model_results.py femto
+
+
 ## Delete all compiled Python files
 clean:
 	find . -type f -name "*.py[co]" -delete

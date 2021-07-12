@@ -141,7 +141,7 @@ df['model_checkpoint_name'] = df['date_time'].astype(str)+'_'+df['loss_func'] +'
 
 
 if SAVE_ENTIRE_CSV:
-    df.to_csv(root_dir / 'models/final' / f'results_summary_{DATASET_TYPE}_all.csv', index=False)
+    df.to_csv(root_dir / 'models/final' / f'{DATASET_TYPE}_results_summary_all.csv', index=False)
 
 #### append test results to df ####
 if ADD_TEST_RESULTS:
@@ -200,68 +200,67 @@ if ADD_TEST_RESULTS:
     y_val_days = torch.reshape(y_val[:, 0], (-1, 1))
     y_test_days = torch.reshape(y_test[:, 0], (-1, 1))
 
-    y_train_days_2 = torch.reshape(y_train_2[:, 0], (-1, 1))
-    y_train_days_3 = torch.reshape(y_train_3[:, 0], (-1, 1))
-
-
     y_train = torch.reshape(y_train[:, 1], (-1, 1))
     y_val = torch.reshape(y_val[:, 1], (-1, 1))
     y_test = torch.reshape(y_test[:, 1], (-1, 1))
 
-    y_train_2 = torch.reshape(y_train_2[:, 1], (-1, 1))
-    y_train_3 = torch.reshape(y_train_3[:, 1], (-1, 1))
+    if DATASET_TYPE == "ims":
+        y_train_days_2 = torch.reshape(y_train_2[:, 0], (-1, 1))
+        y_train_days_3 = torch.reshape(y_train_3[:, 0], (-1, 1))
+        y_train_2 = torch.reshape(y_train_2[:, 1], (-1, 1))
+        y_train_3 = torch.reshape(y_train_3[:, 1], (-1, 1))
     
     # append test results onto results dataframe
-    dfr = test_metrics_to_results_df(folder_checkpoints, df, x_test, y_test)
+    df = test_metrics_to_results_df(folder_checkpoints, df, x_test, y_test)
     
     standard_losses = ['mse', 'rmse', 'rmsle']
 
     # apply 0 or 1 for weibull, and for each unique loss func
-    for index, value in dfr['loss_func'].items():
+    for index, value in df['loss_func'].items():
         if value in standard_losses:
-            dfr.loc[index, 'weibull_loss'] = 0
+            df.loc[index, 'weibull_loss'] = 0
         else:
-            dfr.loc[index, 'weibull_loss'] = 1
+            df.loc[index, 'weibull_loss'] = 1
 
     # convert to 'weibull_loss' column to integer
-    dfr['weibull_loss'] = dfr['weibull_loss'].astype(int)
+    df['weibull_loss'] = df['weibull_loss'].astype(int)
 
 
-    loss_func_list = dfr['loss_func'].unique()
+    loss_func_list = df['loss_func'].unique()
 
-    for index, value in dfr['loss_func'].items():
+    for index, value in df['loss_func'].items():
         for loss_func in loss_func_list:
-            dfr.loc[index, value] = 1
+            df.loc[index, value] = 1
 
-    dfr[loss_func_list] = dfr[loss_func_list].fillna(0, downcast='infer')
+    df[loss_func_list] = df[loss_func_list].fillna(0, downcast='infer')
     
     if SAVE_ENTIRE_CSV:
-        dfr.to_csv(root_dir / 'models/final' / f'results_summary_{DATASET_TYPE}_all.csv', index=False)
+        df.to_csv(root_dir / 'models/final' / f'{DATASET_TYPE}_results_summary_all.csv', index=False)
  
 # how many unique model architectures?
-print('No. unique model architectures:', len(dfr['date_time_seed'].unique()))
-print('No. unique models (includes unique loss functions):', len(dfr['date_time_seed']))
+print('No. unique model architectures:', len(df['date_time_seed'].unique()))
+print('No. unique models (includes unique loss functions):', len(df['date_time_seed']))
 
 
 ##### Filter resutls and select top models #####
-loss_func_list = dfr['loss_func'].unique()
+loss_func_list = df['loss_func'].unique()
 
 sort_by = SORT_BY
 
-dfr = dfr[(dfr['r2_test']>R2_BOUND) & 
-         (dfr['loss_rmse_test']<RMSE_BOUND) &
-         (dfr['r2_train']>R2_BOUND) &
-         (dfr['loss_rmse_train']<RMSE_BOUND) &
-         (dfr['r2_val']>R2_BOUND) & 
-         (dfr['loss_rmse_val']<RMSE_BOUND) &
-         (dfr['beta']==2.0)
+dfr = df[(df['r2_test']>R2_BOUND) & 
+         (df['loss_rmse_test']<RMSE_BOUND) &
+         (df['r2_train']>R2_BOUND) &
+         (df['loss_rmse_train']<RMSE_BOUND) &
+         (df['r2_val']>R2_BOUND) & 
+         (df['loss_rmse_val']<RMSE_BOUND) &
+         (df['beta']==2.0)
 ][:]
 
 dfr = dfr.groupby(['date_time_seed']).apply(lambda x: x.sort_values([sort_by], ascending = False)).reset_index(drop=True)
 dfr = dfr.groupby(['date_time_seed']).head(1).sort_values(by=sort_by, ascending=False)
 
 # save filtered results csv
-dfr.to_csv(root_dir / 'models/final' / f'results_filtered_{DATASET_TYPE}.csv', index=False)
+dfr.to_csv(root_dir / 'models/final' / f'{DATASET_TYPE}_results_filtered.csv', index=False)
 
 
 # count up how often each loss functions type appears as a top performer
@@ -296,3 +295,49 @@ df_count['percent'] = 100 * df_count['count'] / df_count['count'].sum()
 
 # save csv so we can use it later to create charts with
 df_count.to_csv(root_dir / 'models/final' / f'{DATASET_TYPE}_count_results.csv', index=False)
+
+# perform correlation analysis over the various loss functions
+dfr = df[(df['r2_test']>R2_BOUND) & 
+         (df['loss_rmse_test']<RMSE_BOUND) &
+         (df['r2_train']>R2_BOUND) &
+         (df['loss_rmse_train']<RMSE_BOUND) &
+         (df['r2_val']>R2_BOUND) & 
+         (df['loss_rmse_val']<RMSE_BOUND) &
+         (df['beta']==2.0)
+][:]
+
+def change_loss_func_name_corr(cols):
+    loss_func = cols[0]
+    
+    if loss_func == 'mse':
+        return 'MSE'
+    elif loss_func == 'rmse':
+        return 'RMSE'
+    elif loss_func == 'rmsle':
+        return 'RMSLE'
+    elif loss_func == 'weibull_mse':
+        return 'Weibull-MSE\nCombined'
+    elif loss_func == 'weibull_rmse':
+        return 'Weibull-RMSE\nCombined'
+    elif loss_func == 'weibull_rmsle':
+        return 'Weibull-RMSLE\nCombined'
+    elif loss_func == 'weibull_only_mse':
+        return 'Weibull Only\nMSE'
+    elif loss_func == 'weibull_only_rmse':
+        return 'Weibull Only\nRMSE'
+    else:
+        return 'Weibull Only\nRMLSE'    
+
+df_c = dfr[list(loss_func_list) + [sort_by]].copy()
+
+results = {}
+for i in loss_func_list:
+    results[i] = list(pointbiserialr(df_c[i], df_c[sort_by]))
+    
+df_corr = pd.DataFrame.from_dict(results).T
+df_corr = df_corr.rename(columns={0: 'corr', 1:'p_value'}).sort_values(by='corr').sort_values(by='corr',ascending=False)
+df_corr['loss_func2'] = df_corr.index # reset index
+df_corr = df_corr.reset_index(drop=True)
+df_corr['loss_func'] = df_corr[['loss_func2']].apply(change_loss_func_name_corr, axis=1)
+df_corr = df_corr.drop('loss_func2', axis=1)
+df_corr.to_csv(root_dir / 'models/final' / f'{DATASET_TYPE}_correlation_results.csv', index=False)
