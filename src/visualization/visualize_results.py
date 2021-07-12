@@ -268,12 +268,9 @@ def femto_results_rul_fig(
         device = torch.device("cpu")
         print("Running on CPU")
 
-    criterion_mae = nn.L1Loss()
     criterion_rmse = RMSELoss()
-    criterion_rmsle = RMSLELoss()
 
     net = torch.load(path_top_model_folder / top_model_name, map_location=device)
-
 
     # y_list
     y_list = [
@@ -454,7 +451,9 @@ def femto_results_rul_fig(
     plt.close()
 
 
-def ims_results_rul_fig(path_top_model_folder, top_model_name, folder_data_ims, path_save_name, dpi=300):
+def ims_results_rul_fig(
+    path_top_model_folder, top_model_name, folder_data_ims, path_save_name, dpi=300
+):
     (
         x_train,
         y_train,
@@ -475,7 +474,6 @@ def ims_results_rul_fig(path_top_model_folder, top_model_name, folder_data_ims, 
     y_train_days_2 = torch.reshape(y_train_2[:, 0], (-1, 1))
     y_train_days_3 = torch.reshape(y_train_3[:, 0], (-1, 1))
 
-
     y_train = torch.reshape(y_train[:, 1], (-1, 1))
     y_val = torch.reshape(y_val[:, 1], (-1, 1))
     y_test = torch.reshape(y_test[:, 1], (-1, 1))
@@ -483,7 +481,7 @@ def ims_results_rul_fig(path_top_model_folder, top_model_name, folder_data_ims, 
     y_train_2 = torch.reshape(y_train_2[:, 1], (-1, 1))
     y_train_3 = torch.reshape(y_train_3[:, 1], (-1, 1))
 
-        # select device to run neural net on
+    # select device to run neural net on
     if torch.cuda.is_available():
         device = torch.device("cuda:0")
         print("Running on GPU")
@@ -500,20 +498,22 @@ def ims_results_rul_fig(path_top_model_folder, top_model_name, folder_data_ims, 
     # [#d73027, #fc8d59, #fee090, #4575b4]
     # [redish, orangeish, yellowish, blueish]
 
-    sns.set(font_scale=1.0, style="whitegrid", )
+    sns.set(
+        font_scale=1.0,
+        style="whitegrid",
+    )
 
     # establish subplot axes
-    # helpful matplotlib guide: 
+    # helpful matplotlib guide:
     # https://matplotlib.org/2.0.2/users/gridspec.html
-    fig = plt.figure(figsize=(11, 8), dpi=150) 
+    fig = plt.figure(figsize=(11, 8), dpi=150)
     gs = gridspec.GridSpec(2, 2)
 
     ax1 = plt.subplot(gs[0, 0])
     ax2 = plt.subplot(gs[0, 1])
     ax3 = plt.subplot(gs[1, 0])
     ax4 = plt.subplot(gs[1, 1])
-    gs.update(wspace = 0.2, hspace = 0.4)
-
+    gs.update(wspace=0.2, hspace=0.4)
 
     ## General Formatting ##
     # create list of axis elements
@@ -525,43 +525,64 @@ def ims_results_rul_fig(path_top_model_folder, top_model_name, folder_data_ims, 
     ###### TEST DATA #####
     net.eval()
 
-    plt.rcParams['axes.titlepad'] = 7
+    plt.rcParams["axes.titlepad"] = 7
 
     # secondary axis title list
-    ax_title_list = [ 
-                    r"$\bf{(a)}$"+" Train Results (run 2, bearing 1)", 
-                    r"$\bf{(b)}$"+" Train Results (run 3, bearing 3)",
-                    r"$\bf{(c)}$"+" Val Results (run 1, bearing 3)",
-                    r"$\bf{(d)}$"+" Test Results (run 1, bearing 4)"]
-
+    ax_title_list = [
+        r"$\bf{(a)}$" + " Train Results (run 2, bearing 1)",
+        r"$\bf{(b)}$" + " Train Results (run 3, bearing 3)",
+        r"$\bf{(c)}$" + " Val Results (run 1, bearing 3)",
+        r"$\bf{(d)}$" + " Test Results (run 1, bearing 4)",
+    ]
 
     # secondary axis counter
     counter = 0
-    for ax, y_temp, x_temp, y_days, ax_title in zip([ax1, ax2,ax3,ax4],[y_train_2, y_train_3, y_val, y_test],
-                                [x_train_2, x_train_3, x_val, x_test], [y_train_days_2, y_train_days_3, y_val_days, y_test_days], ax_title_list):
-        
+    for ax, y_temp, x_temp, y_days, ax_title in zip(
+        [ax1, ax2, ax3, ax4],
+        [y_train_2, y_train_3, y_val, y_test],
+        [x_train_2, x_train_3, x_val, x_test],
+        [y_train_days_2, y_train_days_3, y_val_days, y_test_days],
+        ax_title_list,
+    ):
+
         y_hats = test(net, x_temp, device, 100)
         index_sorted = np.array(np.argsort(y_temp, 0).reshape(-1))
 
         # build rolling average
-        window_size = 12 # 2 hour rolling avg
-        r2_test_avg, y_hats_rolling_avg = calc_r2_avg(y_hats, y_temp, index_sorted, window_size)
+        window_size = 12  # 2 hour rolling avg
+        r2_test_avg, y_hats_rolling_avg = calc_r2_avg(
+            y_hats, y_temp, index_sorted, window_size
+        )
 
         loss_rmse_test = criterion_rmse(y_hats, y_temp)
         r2_test = r2_score(y_temp, y_hats)
 
-        ax.plot(np.array(y_temp)[index_sorted]*100, label="True Life Percentage", alpha=1, color='#4575b4',linewidth=1, zorder=0)
+        ax.plot(
+            np.array(y_temp)[index_sorted] * 100,
+            label="True Life Percentage",
+            alpha=1,
+            color="#4575b4",
+            linewidth=1,
+            zorder=0,
+        )
         ax.scatter(
             np.arange(0, len(y_hats), 1),
-            y_hats[index_sorted]*100,
+            y_hats[index_sorted] * 100,
             label="Predicted Life Percentage",
             alpha=0.4,
-            c="grey", edgecolors='none',
+            c="grey",
+            edgecolors="none",
             s=2,
         )
 
-        ax.plot(np.arange(0, len(y_hats), 1)[window_size-1:], y_hats_rolling_avg*100, 
-                color='#d73027', alpha=1, label=f'{int(window_size/6)}hr Rolling Avg', linewidth=0.5)
+        ax.plot(
+            np.arange(0, len(y_hats), 1)[window_size - 1 :],
+            y_hats_rolling_avg * 100,
+            color="#d73027",
+            alpha=1,
+            label=f"{int(window_size/6)}hr Rolling Avg",
+            linewidth=0.5,
+        )
 
         print_text = f"RMSE = {loss_rmse_test:.3f}\n$R^2$ = {r2_test:.3f}"
 
@@ -579,33 +600,34 @@ def ims_results_rul_fig(path_top_model_folder, top_model_name, folder_data_ims, 
             bbox={"facecolor": "gray", "alpha": 0.0, "pad": 6},
         )
 
-        index_new = np.arange(0,len(y_hats),int(len(y_hats)/3)-1)
+        index_new = np.arange(0, len(y_hats), int(len(y_hats) / 3) - 1)
 
         y_days_temp = np.array(y_days)
         y_days_temp = np.reshape(y_days_temp, np.shape(y_days_temp)[0])[index_sorted]
 
-        labels_new = [f'{i:.1f}' for i in y_days_temp[index_new]]
+        labels_new = [f"{i:.1f}" for i in y_days_temp[index_new]]
         # change first value to '0'
-        labels_new[0] = '0'
+        labels_new[0] = "0"
 
         ax.set_xticks(index_new)
-        ax.set_xticklabels(labels_new,)
+        ax.set_xticklabels(
+            labels_new,
+        )
         ax.set_title(ax_title, loc="left")
-        
+
         if counter == 0:
             ax.set_xlabel("Runtime (days)")
             ax.set_ylabel("Life Percentage")
-            ax.legend(loc='lower right', fontsize=10)
-            
-        if counter !=0:
+            ax.legend(loc="lower right", fontsize=10)
+
+        if counter != 0:
             ax.set_yticklabels([])
-        
+
         counter += 1
-        
-    plt.savefig(path_save_name,dpi=dpi, bbox_inches = "tight")
+
+    plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
     plt.cla()
     plt.close()
-
 
 
 def main():
@@ -634,9 +656,10 @@ def main():
     folder_data_ims = root_dir / "data/processed/IMS/"
     folder_data_femto = root_dir / "data/processed/FEMTO/"
 
-    copyfile(
-        path_results / "top_models_femto/model.py", "model.py"
-    )  # need model for loading checkpoint
+    # need model for loading checkpoint
+    copyfile(path_results / "top_models_femto/model.py", "model.py")
+
+    # make PRONOSTIA (FEMTO) rul plots
     df_top = pd.read_csv(root_dir / "models/final/femto_results_filtered.csv")
     model_name = df_top["model_checkpoint_name"][0]  # select top model
 
@@ -645,9 +668,10 @@ def main():
         model_name,
         folder_data_femto,
         path_save_loc / "femto_rul_results.png",
-        dpi=150
+        dpi=150,
     )
 
+    # make IMS rul plots
     df_top = pd.read_csv(root_dir / "models/final/ims_results_filtered.csv")
     model_name = df_top["model_checkpoint_name"][0]  # select top model
     ims_results_rul_fig(
@@ -655,7 +679,7 @@ def main():
         model_name,
         folder_data_ims,
         path_save_loc / "ims_rul_results.png",
-        dpi=150
+        dpi=150,
     )
 
     os.remove("model.py")
