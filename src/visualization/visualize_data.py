@@ -66,7 +66,8 @@ def create_time_frequency_plot(
     if save_plot:
         plt.savefig(save_name, dpi=dpi, bbox_inches="tight")
 
-    plt.show()
+    else:
+        plt.show()
 
 
 def plot_freq_peaks(
@@ -148,5 +149,5 @@ def plot_freq_peaks(
     plt.ticklabel_format(axis="y", style="sci", scilimits=(0, 0))
     if save_plot:
         plt.savefig(save_name, dpi=dpi, bbox_inches="tight")
-
-    plt.show()
+    else:
+        plt.show()

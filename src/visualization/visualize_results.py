@@ -682,7 +682,7 @@ def main():
         dpi=150,
     )
 
-    os.remove("model.py")
+    os.remove("model.py") # delete model.py that was copied to root dir
 
 
 if __name__ == "__main__":
