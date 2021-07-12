@@ -25,7 +25,7 @@ from pathlib import Path
 
 import fnmatch
 import os
-import shutil
+from shutil import copyfile
 import sys
 
 from scipy.stats import pointbiserialr
@@ -43,6 +43,8 @@ Save the top performing models also in the models/final folder.
 # General Parameters
 SAVE_ENTIRE_CSV = False # if you want to save the entire CSV, before filtering
 ADD_TEST_RESULTS = True # if you want to append the test results
+TOP_MODEL_COUNT = 2 # the number of models to save in models/final/top_models directory
+                    # e.g. save top 10 models
 
 # Filter parameters
 R2_BOUND = 0.2 # greater than
@@ -262,6 +264,16 @@ dfr = dfr.groupby(['date_time_seed']).head(1).sort_values(by=sort_by, ascending=
 # save filtered results csv
 dfr.to_csv(root_dir / 'models/final' / f'{DATASET_TYPE}_results_filtered.csv', index=False)
 
+# select top N models and save in models/final/top_models directory
+top_models = dfr['model_checkpoint_name'][:TOP_MODEL_COUNT]
+Path(root_dir / f"models/final/top_models_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
+top_model_folder = root_dir / f"models/final/top_models_{DATASET_TYPE}"
+for model_name in top_models:
+    copyfile(folder_checkpoints / f'{model_name}', top_model_folder / f'{model_name}')
+
+# copy model.py in src/models/ to the models/final/top_models directory so that we can
+# easily load the saved checkpoints for later
+copyfile(root_dir / 'src/models/model.py', top_model_folder / 'model.py')
 
 # count up how often each loss functions type appears as a top performer
 def change_loss_func_name(cols):
