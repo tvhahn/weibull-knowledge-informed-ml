@@ -270,6 +270,8 @@ Path(root_dir / f"models/final/top_models_{DATASET_TYPE}").mkdir(parents=True, e
 top_model_folder = root_dir / f"models/final/top_models_{DATASET_TYPE}"
 for model_name in top_models:
     copyfile(folder_checkpoints / f'{model_name}', top_model_folder / f'{model_name}')
+    learning_curve = model_name.split('.')[0]
+    copyfile(folder_learning_curves / f'{learning_curve}.png', top_model_folder / f'{learning_curve}.png')
 
 # copy model.py in src/models/ to the models/final/top_models directory so that we can
 # easily load the saved checkpoints for later
