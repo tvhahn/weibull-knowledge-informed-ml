@@ -270,16 +270,16 @@ dfr = dfr.groupby(['date_time_seed']).head(1).sort_values(by=sort_by, ascending=
 dfr.to_csv(root_dir / 'models/final' / f'{DATASET_TYPE}_results_filtered.csv', index=False)
 
 # create and save early stopping summary statistics
-df0 = df[df['weibull_loss']==0][['epoch_stopped_on']].describe()
-df0 = df0.append(pd.DataFrame([df[df['weibull_loss']==0][['epoch_stopped_on']].median()],index=['median']))
+df0 = dfr[dfr['weibull_loss']==0][['epoch_stopped_on']].describe()
+df0 = df0.append(pd.DataFrame([dfr[dfr['weibull_loss']==0][['epoch_stopped_on']].median()],index=['median']))
 df0.columns =['trad_loss_func']
 
-df1 = df[df['weibull_loss']==1][['epoch_stopped_on']].describe()
-df1 = df1.append(pd.DataFrame([df[df['weibull_loss']==1][['epoch_stopped_on']].median()],index=['median']))
+df1 = dfr[dfr['weibull_loss']==1][['epoch_stopped_on']].describe()
+df1 = df1.append(pd.DataFrame([dfr[dfr['weibull_loss']==1][['epoch_stopped_on']].median()],index=['median']))
 df1.columns =['weibull_loss_func']
 
 df_summary = df0.merge(df1, left_index=True, right_index=True)
-df_summary.to_csv(root_dir / 'models/final' / f'{DATASET_TYPE}_early_stop_summary_stats.csv', index=False)
+df_summary.to_csv(root_dir / 'models/final' / f'{DATASET_TYPE}_early_stop_summary_stats.csv', index=True)
 
 
 # select top N models and save in models/final/top_models directory
