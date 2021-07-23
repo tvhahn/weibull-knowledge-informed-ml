@@ -86,6 +86,79 @@ def loss_function_percentage_fig(
     plt.close()
 
 
+def early_stop_distribution_fig(
+    path_ims_results, path_femto_results, path_save_name, dpi=300
+):
+    """Visualize the distribution of when early stopping occured, by loss function"""
+    dfi = pd.read_csv(path_ims_results)
+    dfp = pd.read_csv(path_femto_results)
+
+    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12, 5))
+
+    title_list = [
+        r"$\bf{(a)}$" + " IMS Distribution of Early Stopping Times",
+        r"$\bf{(b)}$" + " PRONOSTIA Distribution of Early Stopping Times",
+    ]
+    df_list = [dfi, dfp]
+
+    for i, (ax, df, title) in enumerate(zip(axes.flat, df_list, title_list)):
+
+        if i == 0:
+            df = df[df["epoch_stopped_on"] < 250]
+        else:
+            df = df[df["epoch_stopped_on"] < 1250]
+
+        ax = sns.violinplot(
+            x="epoch_stopped_on",
+            y="weibull_loss",
+            data=df,
+            scale="width",
+            inner=None,
+            linewidth=2,
+            color="white",
+            saturation=1,
+            cut=0,
+            orient="h",
+            zorder=0,
+            width=0.8,
+            ax=ax,
+        )
+
+        # strip plot
+        ax = sns.stripplot(
+            x="epoch_stopped_on",
+            y="weibull_loss",
+            data=df,
+            size=6,
+            jitter=0.2,
+            color="black",
+            linewidth=0.5,
+            marker="o",
+            edgecolor=None,
+            alpha=0.1,
+            zorder=4,
+            orient="h",
+            ax=ax,
+        )
+        if i == 0:
+            ax.set_yticklabels(
+                ("Traditional Loss\nFunctions", "Weibull Loss\nFunctions"), fontsize=12
+            )
+        else:
+            ax.set_yticklabels([])
+
+        ax.grid(axis="x", alpha=0.5)
+
+        ax.yaxis.label.set_visible(False)
+        ax.tick_params(axis="x", labelsize=12)
+        ax.set_xlabel("Early Stopping Epoch", labelpad=10, fontsize=12)
+        ax.set_title(title, fontsize=12, loc="left")
+    sns.despine(bottom=True, left=True)
+    plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
+    plt.cla()
+    plt.close()
+
+
 def loss_function_correlation_fig(
     path_ims_corr_csv, path_femto_corr_csv, path_save_name, dpi=300
 ):
@@ -652,6 +725,13 @@ def main():
         path_save_loc / "correlations.svg",
     )
 
+    early_stop_distribution_fig(
+        path_results / "ims_results_filtered.csv",
+        path_results / "femto_results_filtered.csv",
+        path_save_loc / "epoch_stop_dist.png",
+        dpi=150,
+    )
+
     # create the plots of the top models with predictions on them
     folder_data_ims = root_dir / "data/processed/IMS/"
     folder_data_femto = root_dir / "data/processed/FEMTO/"
@@ -682,7 +762,7 @@ def main():
         dpi=150,
     )
 
-    os.remove("model.py") # delete model.py that was copied to root dir
+    os.remove("model.py")  # delete model.py that was copied to root dir
 
 
 if __name__ == "__main__":

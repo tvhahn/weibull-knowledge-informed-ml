@@ -131,10 +131,6 @@ try:
 except:
     pass
 
-# export combined dataframe
-# csv sav_name
-csv_save_name = 'combined_results_2021.04.05_1.csv'
-
 # add a unique identifier for each model architecture
 df['date_time_seed'] = df['date_time'].astype(str)+'_'+df['rnd_seed_input'].astype(str)
 
@@ -227,6 +223,15 @@ if ADD_TEST_RESULTS:
     # convert to 'weibull_loss' column to integer
     df['weibull_loss'] = df['weibull_loss'].astype(int)
 
+    # 0 of no dropping is used, otherwise 1
+    for index, value in df['prob_drop'].items():
+        if value > 0:
+            df.loc[index, 'prob_drop_true'] = 1
+        else:
+            df.loc[index, 'prob_drop_true'] = 0
+
+    df['prob_drop_true'] = df['prob_drop_true'].astype(int)
+
 
     loss_func_list = df['loss_func'].unique()
 
@@ -263,6 +268,19 @@ dfr = dfr.groupby(['date_time_seed']).head(1).sort_values(by=sort_by, ascending=
 
 # save filtered results csv
 dfr.to_csv(root_dir / 'models/final' / f'{DATASET_TYPE}_results_filtered.csv', index=False)
+
+# create and save early stopping summary statistics
+df0 = df[df['weibull_loss']==0][['epoch_stopped_on']].describe()
+df0 = df0.append(pd.DataFrame([df[df['weibull_loss']==0][['epoch_stopped_on']].median()],index=['median']))
+df0.columns =['trad_loss_func']
+
+df1 = df[df['weibull_loss']==1][['epoch_stopped_on']].describe()
+df1 = df1.append(pd.DataFrame([df[df['weibull_loss']==1][['epoch_stopped_on']].median()],index=['median']))
+df1.columns =['weibull_loss_func']
+
+df_summary = df0.merge(df1, left_index=True, right_index=True)
+df_summary.to_csv(root_dir / 'models/final' / f'{DATASET_TYPE}_early_stop_summary_stats.csv', index=False)
+
 
 # select top N models and save in models/final/top_models directory
 top_models = dfr['model_checkpoint_name'][:TOP_MODEL_COUNT]
