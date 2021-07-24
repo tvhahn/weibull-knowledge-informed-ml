@@ -7,8 +7,9 @@ import pandas as pd
 import logging
 from pathlib import Path
 import os
+import torch
 from src.data.data_utils import load_train_test_ims, load_train_test_femto
-from src.features.build_features import build_spectrogram_df_ims
+from src.features.build_features import build_spectrogram_df_ims, create_fft
 
 
 def create_time_frequency_plot(
@@ -187,8 +188,8 @@ def plot_spectogram_with_binned(
         shading="auto",
     )
 
-    ax[0].set_yticks([0,1000,2000,3000,4000,5000])
-    ax[0].set_yticklabels(["",1000,2000,3000,4000,5000])
+    ax[0].set_yticks([0, 1000, 2000, 3000, 4000, 5000])
+    ax[0].set_yticklabels(["", 1000, 2000, 3000, 4000, 5000])
     ax[0].set_ylabel("Frequency (Hz)")
     ax[0].set_xlabel("Runtime (days)")
     ax[0].tick_params(axis="both", which="both", length=0)
@@ -296,12 +297,327 @@ def plot_weibull_example(
     plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
 
 
+def ims_data_processed_fig(
+    folder_data_ims, path_save_name="spectrograms_processed_data_IMS.png", dpi=300
+):
+    (
+        x_train,
+        y_train,
+        x_val,
+        y_val,
+        x_test,
+        y_test,
+        x_train_2,
+        y_train_2,
+        x_train_3,
+        y_train_3,
+    ) = load_train_test_ims(folder_data_ims)
+
+    y_train_days = torch.reshape(y_train[:, 0], (-1, 1))
+    y_val_days = torch.reshape(y_val[:, 0], (-1, 1))
+    y_test_days = torch.reshape(y_test[:, 0], (-1, 1))
+
+    y_train_days_2 = torch.reshape(y_train_2[:, 0], (-1, 1))
+    y_train_days_3 = torch.reshape(y_train_3[:, 0], (-1, 1))
+
+    y_train = torch.reshape(y_train[:, 1], (-1, 1))
+    y_val = torch.reshape(y_val[:, 1], (-1, 1))
+    y_test = torch.reshape(y_test[:, 1], (-1, 1))
+
+    y_train_2 = torch.reshape(y_train_2[:, 1], (-1, 1))
+    y_train_3 = torch.reshape(y_train_3[:, 1], (-1, 1))
+
+    # y_list
+    y_list = [y_train_2, y_train_3, y_val, y_test]
+
+    # x_list
+    x_list = [x_train_2, x_train_3, x_val, x_test]
+
+    # y_days_list
+    y_days_list = [y_train_days_2, y_train_days_3, y_val_days, y_test_days]
+
+    val_max_list = [0.3, 0.3, 0.3, 0.3]
+
+    color_scheme = "inferno"
+
+    fig = plt.figure(
+        figsize=(11, 8),
+    )
+    gs = gridspec.GridSpec(2, 2)
+
+    ax1 = plt.subplot(gs[0, 0])
+    ax2 = plt.subplot(gs[0, 1])
+    ax3 = plt.subplot(gs[1, 0])
+    ax4 = plt.subplot(gs[1, 1])
+    gs.update(wspace=0.2, hspace=0.3)
+
+    ## General Formatting ##
+    # create list of axis elements
+    axes_list = [ax1, ax2, ax3, ax4]
+
+    for ax in axes_list:
+        ax.grid(b=None)
+
+    ###### TEST DATA #####
+    plt.rcParams["axes.titlepad"] = 7
+
+    # secondary axis title list
+    ax_title_list = [
+        "(a)" + " Train Data (run 2, bearing 1)",
+        "(b)" + " Train Data (run 3, bearing 3)",
+        "(c)" + " Val Data (run 1, bearing 3)",
+        "(d)" + " Test Data (run 1, bearing 4)",
+    ]
+
+    counter = 0
+    for ax, ax_title, y_temp, x_temp, y_days, val_max in zip(
+        axes_list, ax_title_list, y_list, x_list, y_days_list, val_max_list
+    ):
+
+        index_sorted = np.array(np.argsort(y_temp, 0).reshape(-1))
+
+        time_array = np.sort(y_days[:, -1])
+
+        index_new = np.arange(0, len(time_array), int(len(time_array) / 3) - 1)
+
+        labels_new = [f"{i:.1f}" for i in time_array[index_new]]
+        labels_new[0] = "0"
+
+        ax.pcolormesh(
+            x_temp[index_sorted].T,
+            cmap=color_scheme,
+            vmax=val_max,
+        )
+
+        ax.set_xticks(index_new)
+        ax.set_xticklabels(
+            labels_new,
+        )
+
+        ax.text(
+            0.02,
+            0.97,
+            ax_title,
+            verticalalignment="top",
+            horizontalalignment="left",
+            transform=ax.transAxes,
+            color="white",
+            fontsize=12,
+        )
+
+        if counter == 0:
+            ax.set_xticks(index_new)
+            ax.set_xticklabels(
+                labels_new,
+            )
+            ax.set_yticks(np.arange(3.5, 20.5, 4))
+            ax.set_yticklabels(list(np.arange(4, 21, 4)))
+            ax.set_ylabel("Frequency Bin")
+            ax.set_xlabel("Runtime (days)")
+        else:
+            ax.set_yticklabels([])
+
+        if counter != 0:
+            ax.set_yticklabels([])
+
+        counter += 1
+
+    sns.despine(left=True, bottom=True, right=True)
+    plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
+
+
+def femto_data_processed_fig(
+    folder_data_femto,
+    path_save_name="spectrograms_processed_data_FEMTO.png",
+    dpi=300,
+    vmax_val=0.15,
+):
+    # load data
+    (
+        x_train,
+        y_train,
+        x_val,
+        y_val,
+        x_test,
+        y_test,
+        x_train1_1,
+        y_train1_1,
+        x_train2_1,
+        y_train2_1,
+        x_train3_1,
+        y_train3_1,
+        x_val1_2,
+        y_val1_2,
+        x_val2_2,
+        y_val2_2,
+        x_val3_2,
+        y_val3_2,
+        x_test1_3,
+        y_test1_3,
+        x_test2_3,
+        y_test2_3,
+        x_test3_3,
+        y_test3_3,
+    ) = load_train_test_femto(folder_data_femto)
+
+    y_train1_1_days = torch.reshape(y_train1_1[:, 0], (-1, 1))
+    y_train2_1_days = torch.reshape(y_train2_1[:, 0], (-1, 1))
+    y_train3_1_days = torch.reshape(y_train3_1[:, 0], (-1, 1))
+    y_val1_2_days = torch.reshape(y_val1_2[:, 0], (-1, 1))
+    y_val2_2_days = torch.reshape(y_val2_2[:, 0], (-1, 1))
+    y_val3_2_days = torch.reshape(y_val3_2[:, 0], (-1, 1))
+    y_test1_3_days = torch.reshape(y_test1_3[:, 0], (-1, 1))
+    y_test2_3_days = torch.reshape(y_test2_3[:, 0], (-1, 1))
+    y_test3_3_days = torch.reshape(y_test3_3[:, 0], (-1, 1))
+
+    y_train = torch.reshape(y_train[:, 1], (-1, 1))
+    y_val = torch.reshape(y_val[:, 1], (-1, 1))
+    y_test = torch.reshape(y_test[:, 1], (-1, 1))
+
+    y_train1_1 = torch.reshape(y_train1_1[:, 1], (-1, 1))
+    y_train2_1 = torch.reshape(y_train2_1[:, 1], (-1, 1))
+    y_train3_1 = torch.reshape(y_train3_1[:, 1], (-1, 1))
+    y_val1_2 = torch.reshape(y_val1_2[:, 1], (-1, 1))
+    y_val2_2 = torch.reshape(y_val2_2[:, 1], (-1, 1))
+    y_val3_2 = torch.reshape(y_val3_2[:, 1], (-1, 1))
+    y_test1_3 = torch.reshape(y_test1_3[:, 1], (-1, 1))
+    y_test2_3 = torch.reshape(y_test2_3[:, 1], (-1, 1))
+    y_test3_3 = torch.reshape(y_test3_3[:, 1], (-1, 1))
+
+    # y_list
+    y_list = [
+        y_train1_1,
+        y_train2_1,
+        y_train3_1,
+        y_val1_2,
+        y_val2_2,
+        y_val3_2,
+        y_test1_3,
+        y_test2_3,
+        y_test3_3,
+    ]
+
+    # x_list
+    x_list = [
+        x_train1_1,
+        x_train2_1,
+        x_train3_1,
+        x_val1_2,
+        x_val2_2,
+        x_val3_2,
+        x_test1_3,
+        x_test2_3,
+        x_test3_3,
+    ]
+
+    # y_days_list
+    y_days_list = [
+        y_train1_1_days,
+        y_train2_1_days,
+        y_train3_1_days,
+        y_val1_2_days,
+        y_val2_2_days,
+        y_val3_2_days,
+        y_test1_3_days,
+        y_test2_3_days,
+        y_test3_3_days,
+    ]
+
+    ax_title_list = [
+        "(a)" + " Train Data (Bearing1_1)",
+        "(b)" + " Train Data (Bearing2_1)",
+        "(c)" + " Train Data (Bearing3_1)",
+        "(d)" + " Val Data (Bearing1_2)",
+        "(e)" + " Val Data (Bearing2_2)",
+        "(f)" + " Val Data (Bearing3_2)",
+        "(g)" + " Test Data (Bearing1_3)",
+        "(h)" + " Test Data (Bearing2_3)",
+        "(i)" + " Test Data (Bearing3_3)",
+    ]
+
+    fig = plt.figure(figsize=(14, 12), dpi=150)
+    gs = gridspec.GridSpec(3, 3)
+    ax1 = plt.subplot(gs[0, 0])
+    ax2 = plt.subplot(gs[0, 1])
+    ax3 = plt.subplot(gs[0, 2])
+    ax4 = plt.subplot(gs[1, 0])
+    ax5 = plt.subplot(gs[1, 1])
+    ax6 = plt.subplot(gs[1, 2])
+    ax7 = plt.subplot(gs[2, 0])
+    ax8 = plt.subplot(gs[2, 1])
+    ax9 = plt.subplot(gs[2, 2])
+    gs.update(wspace=0.15, hspace=0.3)
+
+    # create list of axis elements
+    axes_list = [ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9]
+
+    color_scheme = "inferno"
+    counter = 0
+    for ax, ax_title, y_temp, x_temp, y_days in zip(
+        axes_list, ax_title_list, y_list, x_list, y_days_list
+    ):
+
+        index_sorted = np.array(np.argsort(y_temp, 0).reshape(-1))
+
+        time_array = np.sort(y_days[:, -1])
+
+        index_new = np.arange(0, len(time_array), int(len(time_array) / 3) - 1)
+
+        labels_new = [f"{i*24:.1f}" for i in time_array[index_new]]
+        # change first value to '0'
+        labels_new[0] = "0"
+
+        ax.pcolormesh(
+            x_temp[index_sorted].T,
+            cmap=color_scheme,
+            vmax=vmax_val,
+        )
+
+        ax.set_xticks(index_new)
+        ax.set_xticklabels(
+            labels_new,
+        )
+
+        ax.text(
+            0.02,
+            0.97,
+            ax_title,
+            verticalalignment="top",
+            horizontalalignment="left",
+            transform=ax.transAxes,
+            color="white",
+            fontsize=12,
+        )
+
+        if counter == 0:
+            ax.set_xticks(index_new)
+            ax.set_xticklabels(
+                labels_new,
+            )
+            ax.set_yticks(np.arange(3.5, 20.5, 4))
+            ax.set_yticklabels(list(np.arange(4, 21, 4)))
+            ax.set_ylabel("Frequency Bin")
+            ax.set_xlabel("Runtime (hours)")
+        else:
+            ax.set_yticklabels([])
+
+        if counter != 0:
+            ax.set_yticklabels([])
+
+        counter += 1
+
+    sns.despine(left=True, bottom=True, right=True)
+    plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
+
+
 def main():
     logger = logging.getLogger(__name__)
     logger.info("making figures from results")
 
     path_raw_data = root_dir / "data/raw/IMS/"
     path_save_loc = root_dir / "reports/figures/"
+    folder_data_ims = root_dir / "data/processed/IMS/"
+    folder_data_femto = root_dir / "data/processed/FEMTO/"
 
     folder_2nd = path_raw_data / "2nd_test"
     date_list2 = sorted(os.listdir(folder_2nd))
@@ -314,8 +630,8 @@ def main():
         col_names=col_names,
     )
 
-
-
+    ######################
+    # EXAMPLE SPECTROGRAM AND FEATURE PLOT
     plot_spectogram_with_binned(
         df_spec,
         labels_dict,
@@ -327,10 +643,49 @@ def main():
 
     sns.set(font_scale=0.8, style="whitegrid", font="DejaVu Sans")
 
+    ######################
+    # WEIBULL CDF/PDF PLOT
     plot_weibull_example(
-        beta=2.0, eta=100, 
-        path_save_name=path_save_loc / "weibull_cdf_pdf.svg", 
-        dpi=300
+        beta=2.0, eta=100, path_save_name=path_save_loc / "weibull_cdf_pdf.svg", dpi=300
+    )
+
+    ######################
+    # TIME-DOMAIN, FREQ DOMAIN PLOT
+    folder_1st = path_raw_data / "1st_test"
+    col_names = [
+        "b1_ch1",
+        "b1_ch2",
+        "b2_ch3",
+        "b2_ch4",
+        "b3_ch5",
+        "b3_ch6",
+        "b4_ch7",
+        "b4_ch8",
+    ]
+
+    df = pd.read_csv(folder_1st / "2003.10.22.12.06.24", sep="\t", names=col_names)
+    x, y, xf, yf = create_fft(
+        df,
+        y_name="b1_ch2",
+        sample_freq=20480.0,
+        window="kaiser",
+        beta=3,
+    )
+    create_time_frequency_plot(
+        x, y, xf, yf, save_plot=True, save_name=path_save_loc / "time_freq_domain.svg"
+    )
+
+    ims_data_processed_fig(
+        folder_data_ims,
+        path_save_name=path_save_loc / "spectrograms_processed_data_IMS.png",
+        dpi=300,
+    )
+
+    femto_data_processed_fig(
+        folder_data_femto,
+        path_save_name=path_save_loc / "spectrograms_processed_data_FEMTO.png",
+        dpi=300,
+        vmax_val=0.15,
     )
 
 
