@@ -635,7 +635,7 @@ def main():
     plot_spectogram_with_binned(
         df_spec,
         labels_dict,
-        path_save_loc / "spectrogram_with_binned.png",
+        path_save_loc / "spectrogram_with_binned_example.png",
         vmax_factor1=0.08,
         vmax_factor2=0.5,
         dpi=150,
@@ -646,7 +646,10 @@ def main():
     ######################
     # WEIBULL CDF/PDF PLOT
     plot_weibull_example(
-        beta=2.0, eta=100, path_save_name=path_save_loc / "weibull_cdf_pdf.svg", dpi=300
+        beta=2.0,
+        eta=100,
+        path_save_name=path_save_loc / "weibull_cdf_pdf_example.svg",
+        dpi=300,
     )
 
     ######################
@@ -672,18 +675,27 @@ def main():
         beta=3,
     )
     create_time_frequency_plot(
-        x, y, xf, yf, save_plot=True, save_name=path_save_loc / "time_freq_domain.svg"
+        x,
+        y,
+        xf,
+        yf,
+        save_plot=True,
+        save_name=path_save_loc / "time_freq_domain_example.svg",
     )
 
+    ######################
+    # IMS PROCESSED DATA FIGURE
     ims_data_processed_fig(
         folder_data_ims,
-        path_save_name=path_save_loc / "spectrograms_processed_data_IMS.png",
+        path_save_name=path_save_loc / "ims_spectrograms_processed_data.png",
         dpi=300,
     )
 
+    ######################
+    # PRONOSTIA (FEMTO) PROCESSED DATA FIGURE
     femto_data_processed_fig(
         folder_data_femto,
-        path_save_name=path_save_loc / "spectrograms_processed_data_FEMTO.png",
+        path_save_name=path_save_loc / "femto_spectrograms_processed_data.png",
         dpi=300,
         vmax_val=0.15,
     )
