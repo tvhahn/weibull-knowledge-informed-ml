@@ -1,4 +1,4 @@
-weibull-knowledge-informed
+Weibull-Knowledge-Informed
 ==============================
 
 Exploring the concept of knowledge-informed machine learning while predicting remaining-useful-ngs

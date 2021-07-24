@@ -63,24 +63,31 @@ train_femto:
 	$(PYTHON_INTERPRETER) src/models/train_models.py femto
 
 
-## Gather the IMS models and generate summaries of the model results
+## Gather the IMS models and generate summaries of how the models perform
 summarize_ims_models:
 	$(PYTHON_INTERPRETER) src/models/summarize_model_results.py ims
 
 
+## Gather the PRONOSTIAL (FEMTO) models and generate summaries of how the models perform
 summarize_femto_models:
 	$(PYTHON_INTERPRETER) src/models/summarize_model_results.py femto
 
+
+## Make the figures of the data
 figures_data:
 	$(PYTHON_INTERPRETER) src/visualization/visualize_data.py
 
+
+## Make the figures of the results
 figures_results:
 	$(PYTHON_INTERPRETER) src/visualization/visualize_results.py
+
 
 ## Delete all compiled Python files
 clean:
 	find . -type f -name "*.py[co]" -delete
 	find . -type d -name "__pycache__" -delete
+
 
 ## Test python environment is setup correctly
 test_environment:

@@ -178,7 +178,7 @@ def loss_function_correlation_fig(
 
     df_list = [dfi, dfp]
 
-    for ax, df, title in zip(axes.flat, df_list, title_list):
+    for top_bot_i, (ax, df, title) in enumerate(zip(axes.flat, df_list, title_list)):
 
         df = df.dropna(axis=0)
 
@@ -252,6 +252,13 @@ def loss_function_correlation_fig(
                     size=15,
                     rotation=65,
                 )
+                
+        if top_bot_i == 1:
+            text_bracket = "Not statistically significant"
+            ax.annotate(text_bracket, xy=(3.5, -0.13),  xycoords='data',
+                xytext=(3.5, -0.18), textcoords='data', font="DejaVu Sans",
+                arrowprops=dict(color='.15', arrowstyle='-[, widthB=4.8, lengthB=1.0', lw=2.0),
+                horizontalalignment='center', verticalalignment='bottom',)
 
         plt.rcParams["axes.titlepad"] = 20
         ax.set_title(title, loc="left", size=15)
