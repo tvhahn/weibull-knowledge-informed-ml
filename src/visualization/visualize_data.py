@@ -2,6 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import signal, fftpack
+from matplotlib import gridspec
+import pandas as pd
+import logging
+from pathlib import Path
+import os
+from src.data.data_utils import load_train_test_ims, load_train_test_femto
+from src.features.build_features import build_spectrogram_df_ims
 
 
 def create_time_frequency_plot(
@@ -80,7 +87,7 @@ def plot_freq_peaks(
     save_name="fft_peaks.png",
     dpi=150,
 ):
-    """Create a frequency domain plot and show peaks with associated 
+    """Create a frequency domain plot and show peaks with associated
     frequency values.
 
     Parameters
@@ -151,3 +158,187 @@ def plot_freq_peaks(
         plt.savefig(save_name, dpi=dpi, bbox_inches="tight")
     else:
         plt.show()
+
+
+def plot_spectogram_with_binned(
+    df_spec, labels_dict, path_save_name, vmax_factor1=0.1, vmax_factor2=0.9, dpi=150
+):
+    color_scheme = "inferno"
+
+    days = []
+    for i in labels_dict:
+        days.append(labels_dict[i][4])
+
+    days = sorted(days)
+
+    fig, ax = plt.subplots(
+        1,
+        2,
+        figsize=(11, 4),
+    )
+
+    vmax_val = np.max(df_spec.to_numpy().flatten())
+    ax[0].pcolormesh(
+        days,
+        df_spec.index,
+        df_spec,
+        cmap=color_scheme,
+        vmax=vmax_val * vmax_factor1,
+        shading="auto",
+    )
+
+    ax[0].set_yticks([0,1000,2000,3000,4000,5000])
+    ax[0].set_yticklabels(["",1000,2000,3000,4000,5000])
+    ax[0].set_ylabel("Frequency (Hz)")
+    ax[0].set_xlabel("Runtime (days)")
+    ax[0].tick_params(axis="both", which="both", length=0)
+
+    ax[0].text(
+        0.01,
+        0.99,
+        "(a)",
+        verticalalignment="top",
+        horizontalalignment="left",
+        transform=ax[0].transAxes,
+        color="white",
+        fontsize=12,
+    )
+
+    ##### BINED SPECTROGRAM #####
+    bucket_size = 500
+
+    samples = df_spec.shape[1]
+
+    df_temp = df_spec.iloc[:10000]
+    a = np.array(df_temp)  # make numpy array
+    print(np.shape(a))
+
+    # get the y-axis (frequency values)
+    y = np.array(df_temp.index)
+    y = np.max(y.reshape(-1, bucket_size), axis=1)
+    y = list(y.round().astype("int")[::2])
+    y.insert(0, 0)
+    plt.box(on=None)
+
+    # get the max value for each bucket
+    # https://stackoverflow.com/a/15956341/9214620
+    max_a = np.max(a.reshape(-1, bucket_size, samples), axis=1)
+
+    ax[1].pcolormesh(
+        days,
+        np.arange(0, 21),
+        max_a,
+        cmap=color_scheme,
+        vmax=vmax_val * vmax_factor2,
+        shading="auto",
+    )
+    ax[1].set_yticks(np.arange(1.5, 20.5, 2))
+    ax[1].set_yticklabels(list(np.arange(2, 21, 2)))
+    ax[1].tick_params(axis="both", which="both", length=0)
+
+    ax[1].set_xlabel("Runtime (days)")
+    ax[1].set_ylabel("Frequency Bin")
+
+    ax[1].text(
+        0.01,
+        0.99,
+        "(b)",
+        verticalalignment="top",
+        horizontalalignment="left",
+        transform=ax[1].transAxes,
+        color="white",
+        fontsize=12,
+    )
+
+    sns.despine(left=True, bottom=True, right=True)
+    plt.savefig(path_save_name, bbox_inches="tight", dpi=dpi)
+
+
+def weibull_pdf(t, eta, beta):
+    "weibull PDF function"
+    return (
+        (beta / (eta ** beta))
+        * (t ** (beta - 1.0))
+        * np.exp(-1.0 * ((t / eta) ** beta))
+    )
+
+
+def weibull_cdf(t, eta, beta):
+    "weibull CDF function"
+    return 1.0 - np.exp(-1.0 * ((t / eta) ** beta))
+
+
+def plot_weibull_example(
+    beta=2.0, eta=100, path_save_name="weibull_cdf_pdf.svg", dpi=300
+):
+
+    pal = sns.cubehelix_palette(6, rot=-0.25, light=0.7)
+
+    fig, axes = plt.subplots(1, 2, figsize=(10, 4), constrained_layout=False)
+    axes[0].title.set_text("Weibull CDF")
+    axes[0].set_xlabel("Time (days)", labelpad=10)
+    axes[0].set_ylabel("Fraction Failing, F(t)", labelpad=10)
+    axes[0].grid(False)
+
+    axes[1].title.set_text("Weibull PDF")
+    axes[1].set_xlabel("Time (days)", labelpad=10)
+    axes[1].set_ylabel("Probability Density, f(t)", labelpad=10)
+    axes[1].grid(False)
+
+    for beta in [2.0]:
+
+        t = np.linspace(0, 300, 1000)
+        f = weibull_pdf(t, eta, beta)
+        axes[0].plot(t, f, color=pal[5], linewidth=2)
+
+        axes[1].plot(t, f, color=pal[5], linewidth=2)
+    plt.subplots_adjust(wspace=0.4)
+    plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
+
+
+def main():
+    logger = logging.getLogger(__name__)
+    logger.info("making figures from results")
+
+    path_raw_data = root_dir / "data/raw/IMS/"
+    path_save_loc = root_dir / "reports/figures/"
+
+    folder_2nd = path_raw_data / "2nd_test"
+    date_list2 = sorted(os.listdir(folder_2nd))
+    col_names = ["b1_ch1", "b2_ch2", "b3_ch3", "b4_ch4"]
+    df_spec, labels_dict = build_spectrogram_df_ims(
+        folder_2nd,
+        date_list2,
+        channel_name="b1_ch1",
+        start_time=date_list2[0],
+        col_names=col_names,
+    )
+
+
+
+    plot_spectogram_with_binned(
+        df_spec,
+        labels_dict,
+        path_save_loc / "spectrogram_with_binned.png",
+        vmax_factor1=0.08,
+        vmax_factor2=0.5,
+        dpi=150,
+    )
+
+    sns.set(font_scale=0.8, style="whitegrid", font="DejaVu Sans")
+
+    plot_weibull_example(
+        beta=2.0, eta=100, 
+        path_save_name=path_save_loc / "weibull_cdf_pdf.svg", 
+        dpi=300
+    )
+
+
+if __name__ == "__main__":
+    log_fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    logging.basicConfig(level=logging.INFO, format=log_fmt)
+
+    # not used in this stub but often useful for finding various files
+    root_dir = Path(__file__).resolve().parents[2]
+
+    main()

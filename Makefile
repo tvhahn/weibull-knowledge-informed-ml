@@ -71,6 +71,8 @@ summarize_ims_models:
 summarize_femto_models:
 	$(PYTHON_INTERPRETER) src/models/summarize_model_results.py femto
 
+figures_data:
+	$(PYTHON_INTERPRETER) src/visualization/visualize_data.py
 
 figures_results:
 	$(PYTHON_INTERPRETER) src/visualization/visualize_results.py
