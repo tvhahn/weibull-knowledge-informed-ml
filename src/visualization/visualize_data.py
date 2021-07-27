@@ -289,9 +289,9 @@ def plot_weibull_example(
     for beta in [2.0]:
 
         t = np.linspace(0, 300, 1000)
-        f = weibull_pdf(t, eta, beta)
+        f = weibull_cdf(t, eta, beta)
         axes[0].plot(t, f, color=pal[5], linewidth=2)
-
+        f = weibull_pdf(t, eta, beta)
         axes[1].plot(t, f, color=pal[5], linewidth=2)
     plt.subplots_adjust(wspace=0.4)
     plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
