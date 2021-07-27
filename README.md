@@ -3,7 +3,7 @@ Weibull-Knowledge-Informed-ML
 
 > Exploring the concept of knowledge-informed machine learning with the use of a Weibull-based loss function. Used to predict remaining useful life (RUL) on the [IMS](https://ti.arc.nasa.gov/tech/dash/groups/pcoe/prognostic-data-repository/#bearing) and [PRONOSTIA](https://ti.arc.nasa.gov/tech/dash/groups/pcoe/prognostic-data-repository/#femto) (also called FEMTO) bearing data sets.
 
-
+...*readme in draft*...
 
 ## Setup
 
@@ -12,30 +12,31 @@ Tested in linux (MacOS should also work). If you run windows you'll have to do m
 To reproduce results:
 
 1. Clone this repo - `clone https://github.com/tvhahn/weibull-knowledge-informed.git`
+
 2. Create virtual environment. Assumes that Conda is installed.
    * Linux/MacOS: use command from Makefile - `make create_environment`
    * Windows: from root directory - `conda env create -f envweibull.yml`
    * HPC: `make create_environment` will detect HPC environment and automatically create environment from `make_hpc_venv.sh`. Tested on Compute Canada. Modify `make_hpc_venv.sh` for your own HPC cluster.
+   
 3. Download raw data.
    * Linux/MacOS: use `make download`. Will automatically download to appropriate `data/raw` directory.
-   * Windows: Manually download the the [IMS](https://ti.arc.nasa.gov/tech/dash/groups/pcoe/prognostic-data-repository/#bearing) and [PRONOSTIA](https://ti.arc.nasa.gov/tech/dash/groups/pcoe/prognostic-data-repository/#femto) data sets from NASA prognostics data repository. Put in `data/raw` folder.
+   * Windows: Manually download the the [IMS](https://ti.arc.nasa.gov/tech/dash/groups/pcoe/prognostic-data-repository/#bearing) and [PRONOSTIA](https://ti.arc.nasa.gov/tech/dash/groups/pcoe/prognostic-data-repository/#femto) (FEMTO) data sets from NASA prognostics data repository. Put in `data/raw` folder.
    * HPC: use `make download`. Will automatically detect HPC environment.
+   
 4. Extract raw data.
    * Linux/MacOS: use `make extract`. Will automatically extract to appropriate `data/raw` directory.
    * Windows: Manually extract data. See the [Project Organization](#project-organization) section for folder structure.
-   * HPC: use `make download`. Will automatically detect HPC environment.
+   * HPC: use `make download`. Will automatically detect HPC environment. Again, modify for your HPC cluster.
+   
+5. Ensure virtual environment is activated. `conda activate weibull`
 
+6. From root directory of `weibull-knowledge-informed`, run `pip install -e .` -- this will give the python scripts access to the `src` folders.
 
+7. Train!
 
+   * Linux/MacOS: use `make train_ims` or `make train_femto`. (note: set constants in `train_models.py` for changing random search parameters. Will eventually modify for use with argeparse)
 
-
-
-
-**Setup**
-
-From the home directory, run `pip install -e .` so that scripts have access to the `src` files.
-
-
+     ...
 
 Project Organization
 ------------
@@ -85,7 +86,8 @@ Project Organization
     │
     └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
 
+## Future List
 
---------
+Things to add, sometime, in the future:
 
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+* 
