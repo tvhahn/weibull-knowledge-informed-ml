@@ -5,8 +5,6 @@ Weibull-Knowledge-Informed-ML
 
 
 
-[Setup](#setup)
-
 ## Setup
 
 Tested in linux (MacOS should also work). If you run windows you'll have to do much of the environment setup and data download/preprocessing manually.
@@ -24,7 +22,7 @@ To reproduce results:
    * HPC: use `make download`. Will automatically detect HPC environment.
 4. Extract raw data.
    * Linux/MacOS: use `make extract`. Will automatically extract to appropriate `data/raw` directory.
-   * Windows: Manually extract data. See 
+   * Windows: Manually extract data. See the [Project Organization](#project-organization) section for folder structure.
    * HPC: use `make download`. Will automatically detect HPC environment.
 
 
