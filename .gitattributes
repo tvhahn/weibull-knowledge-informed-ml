@@ -7,3 +7,7 @@ src/data/test_make_data.ipynb linguist-documentation
 *explore.ipynb linguist-documentation
 
 notebooks/scratch/ linguist-documentation
+
+*convergence_charts.ipynb linguist-documentation
+*correlation_chart.ipynb linguist-documentation
+*test_count_figure.ipynb linguist-documentation
