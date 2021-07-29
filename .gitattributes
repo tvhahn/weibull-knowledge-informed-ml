@@ -5,3 +5,5 @@ notebooks/1.0_best_results_ims_2021.04.05.ipynb linguist-documentation
 src/data/test_make_data.ipynb linguist-documentation
 # notebooks/scratch/test_count_figure.ipynb linguist-documentation
 *explore.ipynb linguist-documentation
+
+notebooks/scratch/ linguist-documentation
