@@ -33,6 +33,11 @@ EPOCHS = 3
 PATIENCE = 2
 EARLY_STOP_DELAY = 0
 
+
+#######################################################
+# Set Directories
+#######################################################
+
 # check if "scratch" path exists in the home directory
 # if it does, assume we are on HPC
 scratch_path = Path.home() / 'scratch'
