@@ -76,6 +76,14 @@ args = parser.parse_args()
 # Set Directories
 #######################################################
 
+# set project directory
+if args.proj_dir:
+    proj_dir = Path(args.proj_dir)
+else:
+    # proj_dir assumed to be cwd
+    proj_dir = Path.cwd()
+
+
 # check if "scratch" path exists in the home directory
 # if it does, assume we are on HPC
 scratch_path = Path.home() / "scratch"
@@ -87,7 +95,7 @@ else:
 # set random seed for parameter search
 if scratch_path.exists():
     # for HPC input
-    DATASET_TYPE = str(sys.argv[1])  # 'ims' or 'femto'
+    DATASET_TYPE = args.data_set  # 'ims' or 'femto'
     RANDOM_SEED_INPUT = np.random.randint(0, 1e7)
     print("RANDOM_SEED_INPUT = ", RANDOM_SEED_INPUT)
 
@@ -107,9 +115,9 @@ if scratch_path.exists():
     print("#### FOLDER_PATH:", folder_path)
 
     if DATASET_TYPE == "ims":
-        folder_data = Path.cwd() / "data/processed/IMS/"
+        folder_data = Path(args.path_data) / "IMS"
     else:
-        folder_data = Path.cwd().parent.parent / "data/processed/FEMTO/"
+        folder_data = Path(args.path_data) / "FEMTO"
 
     folder_results = Path(scratch_path / f"weibull_results/results_csv_{DATASET_TYPE}")
     folder_checkpoints = Path(
@@ -121,12 +129,12 @@ if scratch_path.exists():
 
 else:
     # if not on HPC then on local comp
-    DATASET_TYPE = str(sys.argv[1])  # 'ims' or 'femto'
+    DATASET_TYPE = args.data_set   # 'ims' or 'femto'
     RANDOM_SEED_INPUT = np.random.randint(0, 1e7)
     # RANDOM_SEED_INPUT = 12
 
     # set important folder locations
-    folder_path = Path.cwd()
+    folder_path = proj_dir
     print("folder_path -->", folder_path)
     Path(folder_path / f"models/interim/learning_curves_{DATASET_TYPE}").mkdir(
         parents=True, exist_ok=True
@@ -142,10 +150,10 @@ else:
 
     # data folder
     if DATASET_TYPE == "ims":
-        folder_data = folder_path / "data/processed/IMS/"
+        folder_data = Path(args.path_data) / "IMS"
         print("load IMS data", folder_data)
     else:
-        folder_data = folder_path / "data/processed/FEMTO/"
+        folder_data = Path(args.path_data) / "FEMTO"
         print("load FEMTO data", folder_data)
 
     folder_results = folder_path / f"models/interim/results_csv_{DATASET_TYPE}"

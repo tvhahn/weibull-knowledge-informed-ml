@@ -61,9 +61,9 @@ train_ims:
 ## Train on FEMTO
 train_femto:
 ifeq (True,$(HAS_CONDA)) # assume on local
-	$(PYTHON_INTERPRETER) src/models/train_models.py femto
+	$(PYTHON_INTERPRETER) src/models/train_models.py --data_set femto --path_data data/processed --proj_dir $(PROJECT_DIR)
 else # assume on HPC
-	sbatch src/models/train_model_femto_hpc.sh
+	sbatch src/models/train_model_femto_hpc.sh $(PROJECT_DIR)
 endif
 
 
