@@ -116,10 +116,10 @@ if scratch_path.exists():
     print("#### FOLDER_PATH:", folder_path)
 
     if DATASET_TYPE == "ims":
-        folder_data = Path(args.path_data) / "IMS"
+        folder_data = Path(args.path_data) / "processed/IMS"
         print('Folder data path:', folder_data)
     else:
-        folder_data = Path(args.path_data) / "FEMTO"
+        folder_data = Path(args.path_data) / "processed/FEMTO"
         print('Folder data path:', folder_data)
 
     folder_results = Path(scratch_path / f"weibull_results/results_csv_{DATASET_TYPE}")

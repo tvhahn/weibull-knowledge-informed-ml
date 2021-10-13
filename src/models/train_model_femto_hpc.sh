@@ -12,10 +12,10 @@ PROJECT_DIR=$1
 
 # copy processed data from scratch to the temporary directory used for batch job
 # this will be much faster as the train_model.py rapidly access the training data
-mkdir $SLURM_TMPDIR/data/processed
-cp -r $PROJECT_DIR/data/processed $SLURM_TMPDIR/data/processed
+mkdir -p $SLURM_TMPDIR/data
+cp -r $PROJECT_DIR/data/processed $SLURM_TMPDIR/data
 
 module load python/3.8
 source ~/weibull/bin/activate
 
-python $PROJECT_DIR/src/models/train_models.py --data_set femto --path_data $SLURM_TMPDIR/data/processed --proj_dir $PROJECT_DIR
+python $PROJECT_DIR/src/models/train_models.py --data_set femto --path_data $SLURM_TMPDIR/data --proj_dir $PROJECT_DIR
