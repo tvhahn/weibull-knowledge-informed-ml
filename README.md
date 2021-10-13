@@ -7,7 +7,7 @@ Knowledge-informed machine learning is used on the IMS and PRONOSTIA bearing dat
 
 The experiment is detailed in the Journal of Prognostics and Health Management, with an extensive discussion on the results, shortcoming, and benefits of the approach. The paper also gives an overview of knowledge informed machine learning as it applies to prognostics and health management (PHM). Please cite (link below) this work if you find it useful!
 
-You can replicate the work by following the instructions in the [Setup](#setup) section. If you have any questions, leave a comment in the discussion, or email me (18tcvh@queensu.ca).
+You can replicate the work, and all figures, by following the instructions in the [Setup](#setup) section. If you have any questions, leave a comment in the discussion, or email me (18tcvh@queensu.ca).
 
 ## Summary
 
@@ -15,9 +15,18 @@ In this work, we use the definition of knowledge informed machine learning from 
 
 ![source_rep_int](./reports/figures/source_rep_int.png)
 
-
+A large hyper-parameter search is conducted on feed-forward neural networks. Nine different Weibull-based loss functions are tested on each unique neural network. The below chart is a qualitative method of showing the effectiveness of the Weibull-based loss functions on the two data sets.
 
 ![loss_function_percentages](./reports/figures/loss_function_percentages.svg)
+
+We also conducted a statistical analysis of the results, shown below:
+
+<div style="text-align: left; ">
+<figure>
+  <img src="./reports/figures/correlations.svg" alt="programming" style="background:none; border:none; box-shadow:none; text-align:center" width="600px"/>
+</figure>
+</div>
+
 
 
 
