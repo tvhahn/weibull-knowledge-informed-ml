@@ -94,6 +94,7 @@ else:
 
 # set random seed for parameter search
 if scratch_path.exists():
+    print('#### Running on HPC')
     # for HPC input
     DATASET_TYPE = args.data_set  # 'ims' or 'femto'
     RANDOM_SEED_INPUT = np.random.randint(0, 1e7)
@@ -116,8 +117,10 @@ if scratch_path.exists():
 
     if DATASET_TYPE == "ims":
         folder_data = Path(args.path_data) / "IMS"
+        print('Folder data path:', folder_data)
     else:
         folder_data = Path(args.path_data) / "FEMTO"
+        print('Folder data path:', folder_data)
 
     folder_results = Path(scratch_path / f"weibull_results/results_csv_{DATASET_TYPE}")
     folder_checkpoints = Path(
