@@ -19,8 +19,11 @@ from src.data.data_utils import load_train_test_ims, load_train_test_femto
 from model import Net
 from loss import RMSELoss, RMSLELoss, WeibullLossRMSE, WeibullLossRMSLE, WeibullLossMSE
 import h5py
-from src.visualization.visualize_training import plot_trained_model_results_ims, plot_trained_model_results_femto
-
+from src.visualization.visualize_training import (
+    plot_trained_model_results_ims,
+    plot_trained_model_results_femto,
+)
+import argparse
 
 
 ###################
@@ -35,16 +38,51 @@ EARLY_STOP_DELAY = 0
 
 
 #######################################################
+# Argparse
+#######################################################
+
+# parse arguments
+parser = argparse.ArgumentParser()
+
+parser.add_argument(
+    "-d", 
+    "--path_data", 
+    dest="path_data", 
+    type=str, 
+    help="Path to processed data"
+)
+
+parser.add_argument(
+    "-s",
+    "--data_set",
+    dest="data_set",
+    type=str,
+    default="ims",
+    help="The data set use (either 'ims' or 'femto')",
+)
+
+parser.add_argument(
+    "-p",
+    "--proj_dir",
+    dest="proj_dir",
+    type=str,
+    help="Location of project folder",
+)
+
+args = parser.parse_args()
+
+
+#######################################################
 # Set Directories
 #######################################################
 
 # check if "scratch" path exists in the home directory
 # if it does, assume we are on HPC
-scratch_path = Path.home() / 'scratch'
+scratch_path = Path.home() / "scratch"
 if scratch_path.exists():
-    print('Assume on HPC')
+    print("Assume on HPC")
 else:
-    print('Assume on local compute')
+    print("Assume on local compute")
 
 # set random seed for parameter search
 if scratch_path.exists():
@@ -58,11 +96,15 @@ if scratch_path.exists():
     Path(scratch_path / f"weibull_results/learning_curves_{DATASET_TYPE}").mkdir(
         parents=True, exist_ok=True
     )
-    Path(scratch_path / f"weibull_results/results_csv_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
-    Path(scratch_path / f"weibull_results/checkpoints_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
+    Path(scratch_path / f"weibull_results/results_csv_{DATASET_TYPE}").mkdir(
+        parents=True, exist_ok=True
+    )
+    Path(scratch_path / f"weibull_results/checkpoints_{DATASET_TYPE}").mkdir(
+        parents=True, exist_ok=True
+    )
     folder_path = scratch_path / "weibull_results"
 
-    print('#### FOLDER_PATH:', folder_path)
+    print("#### FOLDER_PATH:", folder_path)
 
     if DATASET_TYPE == "ims":
         folder_data = Path.cwd() / "data/processed/IMS/"
@@ -70,8 +112,12 @@ if scratch_path.exists():
         folder_data = Path.cwd().parent.parent / "data/processed/FEMTO/"
 
     folder_results = Path(scratch_path / f"weibull_results/results_csv_{DATASET_TYPE}")
-    folder_checkpoints = Path(scratch_path / f"weibull_results/checkpoints_{DATASET_TYPE}")
-    folder_learning_curves = Path(scratch_path / f"weibull_results/learning_curves_{DATASET_TYPE}")
+    folder_checkpoints = Path(
+        scratch_path / f"weibull_results/checkpoints_{DATASET_TYPE}"
+    )
+    folder_learning_curves = Path(
+        scratch_path / f"weibull_results/learning_curves_{DATASET_TYPE}"
+    )
 
 else:
     # if not on HPC then on local comp
@@ -81,12 +127,18 @@ else:
 
     # set important folder locations
     folder_path = Path.cwd()
-    print('folder_path -->', folder_path)
-    Path(folder_path / f"models/interim/learning_curves_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
-    Path(folder_path / f"models/interim/results_csv_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
-    Path(folder_path / f"models/interim/checkpoints_{DATASET_TYPE}").mkdir(parents=True, exist_ok=True)
+    print("folder_path -->", folder_path)
+    Path(folder_path / f"models/interim/learning_curves_{DATASET_TYPE}").mkdir(
+        parents=True, exist_ok=True
+    )
+    Path(folder_path / f"models/interim/results_csv_{DATASET_TYPE}").mkdir(
+        parents=True, exist_ok=True
+    )
+    Path(folder_path / f"models/interim/checkpoints_{DATASET_TYPE}").mkdir(
+        parents=True, exist_ok=True
+    )
 
-    print('#### FOLDER_PATH:', folder_path)
+    print("#### FOLDER_PATH:", folder_path)
 
     # data folder
     if DATASET_TYPE == "ims":
@@ -98,7 +150,9 @@ else:
 
     folder_results = folder_path / f"models/interim/results_csv_{DATASET_TYPE}"
     folder_checkpoints = folder_path / f"models/interim/checkpoints_{DATASET_TYPE}"
-    folder_learning_curves = folder_path / f"models/interim/learning_curves_{DATASET_TYPE}"
+    folder_learning_curves = (
+        folder_path / f"models/interim/learning_curves_{DATASET_TYPE}"
+    )
 
 ######################################
 # Define Parameters for Random Search
@@ -194,7 +248,6 @@ else:
         x_test3_3,
         y_test3_3,
     ) = load_train_test_femto(folder_data)
-
 
     y_train_days = torch.reshape(y_train[:, 0], (-1, 1))
     y_val_days = torch.reshape(y_val[:, 0], (-1, 1))
@@ -702,8 +755,6 @@ for i, param in enumerate(param_list):
 
         # update csv of results
         df_results.to_csv(
-            folder_results
-            / f"results_{date_results}_{RANDOM_SEED_INPUT}.csv",
+            folder_results / f"results_{date_results}_{RANDOM_SEED_INPUT}.csv",
             index=False,
         )
-
