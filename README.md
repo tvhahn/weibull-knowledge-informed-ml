@@ -1,4 +1,4 @@
-Weibull-Knowledge-Informed-ML
+Knowledge Informed Machine Learning using a Weibull-based Loss Function
 ==============================
 
 > Exploring the concept of knowledge-informed machine learning with the use of a Weibull-based loss function. Used to predict remaining useful life (RUL) on the [IMS](https://ti.arc.nasa.gov/tech/dash/groups/pcoe/prognostic-data-repository/#bearing) and [PRONOSTIA](https://ti.arc.nasa.gov/tech/dash/groups/pcoe/prognostic-data-repository/#femto) (also called FEMTO) bearing data sets.
@@ -6,6 +6,8 @@ Weibull-Knowledge-Informed-ML
 The experiment is detailed in the Journal of Prognostics and Health Management. The paper also gives an overview of knowledge informed machine learning as it applies to prognostics and health management (PHM). Please cite (link below) this work if you find it useful!
 
 You can replicate the work by following the instructions in the [Setup](#setup) section. If you have any questions, leave a comment in the discussion, or email me (18tcvh@queensu.ca).
+
+## Summary
 
 In this work, we use the definition of knowledge informed machine learning from von Rueden et al. (their excellent paper is [here](https://arxiv.org/abs/1903.12394)). Here's the general taxonomy of our knowledge informed machine learning experiment:
 
