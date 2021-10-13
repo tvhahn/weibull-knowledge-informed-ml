@@ -8,8 +8,7 @@
 #SBATCH --mail-type=ALL               # Type of email notification- BEGIN,END,F$
 #SBATCH --mail-user=18tcvh@queensu.ca   # Email to which notifications will be $
 
-module load StdEnv/2016.4
-module load scipy-stack/2019b
+module load python/3.8
 source ~/weibull/bin/activate
 
 python src/models/train_models.py femto
