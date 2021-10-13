@@ -60,7 +60,11 @@ train_ims:
 
 ## Train on FEMTO
 train_femto:
+ifeq (True,$(HAS_CONDA)) # assume on local
 	$(PYTHON_INTERPRETER) src/models/train_models.py femto
+else # assume on HPC
+	sbatch train_model_femto_hpc.sh
+endif
 
 
 ## Gather the IMS models and generate summaries of how the models perform
