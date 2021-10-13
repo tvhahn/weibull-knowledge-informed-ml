@@ -55,7 +55,11 @@ data: requirements
 
 ## Train on IMS
 train_ims: 
-	$(PYTHON_INTERPRETER) src/models/train_models.py ims
+ifeq (True,$(HAS_CONDA)) # assume on local
+	$(PYTHON_INTERPRETER) src/models/train_models.py --data_set ims --path_data data/processed --proj_dir $(PROJECT_DIR)
+else # assume on HPC
+	sbatch src/models/train_model_ims_hpc.sh $(PROJECT_DIR)
+endif
 
 
 ## Train on FEMTO
