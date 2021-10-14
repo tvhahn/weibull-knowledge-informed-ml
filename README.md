@@ -43,6 +43,17 @@ We also conducted a statistical analysis of the results,  as shown below.
 </figure>
 </div>
 
+<div style="text-align: left; ">
+<figure>
+  <img src="./reports/figures/ims_rul_results.png" alt="IMS RUL  trend" style="background:none; border:none; box-shadow:none; text-align:center" width="800px"/>
+</figure>
+</div>
+
+<div style="text-align: left; ">
+<figure>
+  <img src="./reports/figures/femto_rul_results.png" alt="PRONOSTIA RUL  trend" style="background:none; border:none; box-shadow:none; text-align:center" width="1000px"/>
+</figure>
+</div>
 
 
 
