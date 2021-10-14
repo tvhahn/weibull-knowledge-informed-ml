@@ -43,11 +43,14 @@ We also conducted a statistical analysis of the results,  as shown below.
 </figure>
 </div>
 
+The top performing models' RUL trends are shown below, for both the IMS and PRONOSTIA data sets.
+
 <div style="text-align: left; ">
 <figure>
-  <img src="./reports/figures/ims_rul_results.png" alt="IMS RUL  trend" style="background:none; border:none; box-shadow:none; text-align:center" width="800px"/>
+  <img src="./reports/figures/ims_rul_results.png" alt="IMS RUL  trend" style="background:none; border:none; box-shadow:none; text-align:center" width="700px"/>
 </figure>
 </div>
+
 
 <div style="text-align: left; ">
 <figure>
