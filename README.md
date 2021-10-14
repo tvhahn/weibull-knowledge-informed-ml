@@ -20,7 +20,6 @@ Bearing vibration data (from the frequency domain) was used as input to feed-for
 <div style="text-align: left; ">
 <figure>
   <img src="./reports/figures/spectrogram_with_binned_example.png" alt="spectrogram" style="background:none; border:none; box-shadow:none; text-align:center" width="1000px"/>
-  <figcaption style="color:grey; font-size:smaller">(a) Spectrogram from the second IMS experiment, bearing one, horizontal acceleration channel. (b) The resulting spectrogram after taking the maximum value in each of the 20 bins.</figcaption>
 </figure>
 </div>
 
@@ -32,7 +31,6 @@ The below chart is a qualitative method of showing the effectiveness of the Weib
 <div style="text-align: left; ">
 <figure>
   <img src="./reports/figures/loss_function_percentages.svg" alt="loss function percentage" style="background:none; border:none; box-shadow:none; text-align:center" width="1000px"/>
-      <figcaption style="color:grey; font-size:smaller">The loss functions, ranked by how frequently they appeared in the results, after the poorly performing models were filtered out.</figcaption>
 </figure>
 </div>
 
