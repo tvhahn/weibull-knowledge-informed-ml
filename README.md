@@ -93,7 +93,13 @@ To reproduce results:
 
    * Linux/MacOS: use `make train_ims` or `make train_femto`. (note: set constants in `train_models.py` for changing random search parameters. Will eventually modify for use with Argeparse...)
 
-   * Windows: run manually by calling the script - `python train_ims`
+   * Windows: run manually by calling the script - `python train_ims` or `python train_femto`
+   
+   * HPC: use `make train_ims` or `make train_femto`. The HPC environment should be automatically detected. A SLURM script will be run for a batch job.
+   
+     * Modify the `train_modify_ims_hpc.sh` or `train_model_femto_hpc.sh` in the `src/models` directory to meet your HPC cluster. This should work on Compute Canada out of the box.
+     
+   * 
    
      ...
 
