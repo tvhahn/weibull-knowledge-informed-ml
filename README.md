@@ -17,15 +17,25 @@ In this work, we use the definition of knowledge informed machine learning from 
 
 A large hyper-parameter search is conducted on feed-forward neural networks. Nine different Weibull-based loss functions are tested on each unique neural network. The below chart is a qualitative method of showing the effectiveness of the Weibull-based loss functions on the two data sets.
 
+<div style="text-align: left; ">
+<figure>
+  <img src="./reports/figures/loss_function_percentages.svg" alt="loss function percentage" style="background:none; border:none; box-shadow:none; text-align:center" width="1000px"/>
+</figure>
+</div>
+
+
+
+
 ![loss_function_percentages](./reports/figures/loss_function_percentages.svg)
 
 We also conducted a statistical analysis of the results, shown below:
 
 <div style="text-align: left; ">
 <figure>
-  <img src="./reports/figures/correlations.svg" alt="programming" style="background:none; border:none; box-shadow:none; text-align:center" width="600px"/>
+  <img src="./reports/figures/correlations.svg" alt="correlation of the weibull-based loss function to results" style="background:none; border:none; box-shadow:none; text-align:center" width="500px"/>
 </figure>
 </div>
+
 
 
 
