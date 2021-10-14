@@ -71,7 +71,7 @@ To reproduce results:
 1. Clone this repo - `clone https://github.com/tvhahn/weibull-knowledge-informed.git`
 
 2. Create virtual environment. Assumes that Conda is installed.
-   * Linux/MacOS: use command from Makefile - `make create_environment`
+   * Linux/MacOS: use command from the Makefile in the root directory - `make create_environment`
    * Windows: from root directory - `conda env create -f envweibull.yml`
    * HPC: `make create_environment` will detect HPC environment and automatically create environment from `make_hpc_venv.sh`. Tested on Compute Canada. Modify `make_hpc_venv.sh` for your own HPC cluster.
    
@@ -91,8 +91,10 @@ To reproduce results:
 
 7. Train!
 
-   * Linux/MacOS: use `make train_ims` or `make train_femto`. (note: set constants in `train_models.py` for changing random search parameters. Will eventually modify for use with argeparse)
+   * Linux/MacOS: use `make train_ims` or `make train_femto`. (note: set constants in `train_models.py` for changing random search parameters. Will eventually modify for use with Argeparse...)
 
+   * Windows: run manually by calling the script - `python train_ims`
+   
      ...
 
 Project Organization
