@@ -15,7 +15,7 @@ In this work, we use the definition of knowledge informed machine learning from 
 
 ![source_rep_int](./reports/figures/source_rep_int.png)
 
-Bearing vibration data (from the frequency domain) was used as input to feed-forward neural networks. The below figure demonstrates the complete spectrogram (a) and the spectrogram after "binning" (b), which is used as input to the neural network.
+Bearing vibration data (from the frequency domain) was used as input to feed-forward neural networks. The below figure demonstrates the data as a spectrogram (a) and the spectrogram after "binning" (b). The binned data was used as input.
 
 <div style="text-align: left; ">
 <figure>
