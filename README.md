@@ -5,7 +5,7 @@ Knowledge Informed Machine Learning using a Weibull-based Loss Function
 
 Knowledge-informed machine learning is used on the IMS and PRONOSTIA bearing data sets for remaining useful life (RUL) prediction. The knowledge is integrated into a neural network through a novel Weibull-based loss function. A thorough statistical analysis of the Weibull-based loss function is conducted, demonstrating the effectiveness of the method on the PRONOSTIA data set. However, the Weibull-based loss function is less effective on the IMS data set. 
 
-The experiment is detailed in the Journal of Prognostics and Health Management, with an extensive discussion on the results, shortcoming, and benefits of the approach. The paper also gives an overview of knowledge informed machine learning as it applies to prognostics and health management (PHM). Please cite (link below) this work if you find it useful!
+The experiment is detailed in the Journal of Prognostics and Health Management, with an extensive discussion on the results, shortcomings, and benefits analysis. The paper also gives an overview of knowledge informed machine learning as it applies to prognostics and health management (PHM). Please cite (link below) this work if you find it useful!
 
 You can replicate the work, and all figures, by following the instructions in the [Setup](#setup) section. If you have any questions, leave a comment in the discussion, or email me (18tcvh@queensu.ca).
 
@@ -15,20 +15,29 @@ In this work, we use the definition of knowledge informed machine learning from 
 
 ![source_rep_int](./reports/figures/source_rep_int.png)
 
-A large hyper-parameter search is conducted on feed-forward neural networks. Nine different Weibull-based loss functions are tested on each unique neural network. The below chart is a qualitative method of showing the effectiveness of the Weibull-based loss functions on the two data sets.
+Bearing vibration data (from the frequency domain) was used as input to feed-forward neural networks. The below figure demonstrates the complete spectrogram (a) and the spectrogram after "binning" (b), which is used as input to the neural network.
 
 <div style="text-align: left; ">
 <figure>
-  <img src="./reports/figures/loss_function_percentages.svg" alt="loss function percentage" style="background:none; border:none; box-shadow:none; text-align:center" width="1000px"/>
+  <img src="./reports/figures/spectrogram_with_binned_example.png" alt="spectrogram" style="background:none; border:none; box-shadow:none; text-align:center" width="1000px"/>
+  <figcaption style="color:grey; font-size:smaller">(a) Spectrogram from the second IMS experiment, bearing one, horizontal acceleration channel. (b) The resulting spectrogram after taking the maximum value in each of the 20 bins.</figcaption>
 </figure>
 </div>
 
 
+A large hyper-parameter search was conducted on neural networks. Nine different Weibull-based loss functions were tested on each unique network. 
+
+The below chart is a qualitative method of showing the effectiveness of the Weibull-based loss functions on the two data sets.
+
+<div style="text-align: left; ">
+<figure>
+  <img src="./reports/figures/loss_function_percentages.svg" alt="loss function percentage" style="background:none; border:none; box-shadow:none; text-align:center" width="1000px"/>
+      <figcaption style="color:grey; font-size:smaller">The loss functions, ranked by how frequently they appeared in the results, after the poorly performing models were filtered out.</figcaption>
+</figure>
+</div>
 
 
-![loss_function_percentages](./reports/figures/loss_function_percentages.svg)
-
-We also conducted a statistical analysis of the results, shown below:
+We also conducted a statistical analysis of the results,  as shown below.
 
 <div style="text-align: left; ">
 <figure>
