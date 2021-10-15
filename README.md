@@ -85,23 +85,20 @@ To reproduce results:
    * Windows: Manually extract data. See the [Project Organization](#project-organization) section for folder structure.
    * HPC: use `make download`. Will automatically detect HPC environment. Again, modify for your HPC cluster.
    
-5. Ensure virtual environment is activated. `conda activate weibull`
+5. Ensure virtual environment is activated. `conda activate weibull` or `source ~/weibull/bin/activate`
 
 6. From root directory of `weibull-knowledge-informed`, run `pip install -e .` -- this will give the python scripts access to the `src` folders.
 
 7. Train!
 
    * Linux/MacOS: use `make train_ims` or `make train_femto`. (note: set constants in `train_models.py` for changing random search parameters. Will eventually modify for use with Argeparse...)
-
-   * Windows: run manually by calling the script - `python train_ims` or `python train_femto`
-   
+   * Windows: run manually by calling the script - `python train_ims` or `python train_femto`  with the appropriate arguments. For example: `src/models/train_models.py --data_set femto --path_data your_data_path --proj_dir your_project_directory_path`
    * HPC: use `make train_ims` or `make train_femto`. The HPC environment should be automatically detected. A SLURM script will be run for a batch job.
+   * Modify the `train_modify_ims_hpc.sh` or `train_model_femto_hpc.sh` in the `src/models` directory to meet the needs of your HPC cluster. This should work on Compute Canada out of the box.
    
-     * Modify the `train_modify_ims_hpc.sh` or `train_model_femto_hpc.sh` in the `src/models` directory to meet your HPC cluster. This should work on Compute Canada out of the box.
-     
-   * 
-   
-     ...
+8. 
+
+  ...
 
 Project Organization
 ------------
