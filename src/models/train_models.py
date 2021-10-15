@@ -31,9 +31,9 @@ import argparse
 ###################
 
 # before random search
-RANDOM_SEARCH_ITERATIONS = 1
-EPOCHS = 3
-PATIENCE = 2
+RANDOM_SEARCH_ITERATIONS = 3000
+EPOCHS = 2000
+PATIENCE = 50
 EARLY_STOP_DELAY = 0
 
 
