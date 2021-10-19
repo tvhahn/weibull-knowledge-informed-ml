@@ -5,7 +5,7 @@ Knowledge Informed Machine Learning using a Weibull-based Loss Function
 
 Knowledge-informed machine learning is used on the IMS and PRONOSTIA bearing data sets for remaining useful life (RUL) prediction. The knowledge is integrated into a neural network through a novel Weibull-based loss function. A thorough statistical analysis of the Weibull-based loss function is conducted, demonstrating the effectiveness of the method on the PRONOSTIA data set. However, the Weibull-based loss function is less effective on the IMS data set. 
 
-The experiment will be detailed in the Journal of Prognostics and Health Management (accepted and pending publication), with an extensive discussion on the results, shortcomings, and benefits analysis. The paper also gives an overview of knowledge informed machine learning as it applies to prognostics and health management (PHM).
+The experiment will be detailed in the [Journal of Prognostics and Health Management](https://ojs.library.carleton.ca/index.php/jphm) (accepted and pending publication), with an extensive discussion on the results, shortcomings, and benefits analysis. The paper also gives an overview of knowledge informed machine learning as it applies to prognostics and health management (PHM).
 
 You can replicate the work, and all figures, by following the instructions in the [Setup](#setup) section. If you have any questions, leave a comment in the discussion, or email me (18tcvh@queensu.ca).
 
