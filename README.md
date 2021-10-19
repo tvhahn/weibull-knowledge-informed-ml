@@ -5,7 +5,7 @@ Knowledge Informed Machine Learning using a Weibull-based Loss Function
 
 Knowledge-informed machine learning is used on the IMS and PRONOSTIA bearing data sets for remaining useful life (RUL) prediction. The knowledge is integrated into a neural network through a novel Weibull-based loss function. A thorough statistical analysis of the Weibull-based loss function is conducted, demonstrating the effectiveness of the method on the PRONOSTIA data set. However, the Weibull-based loss function is less effective on the IMS data set. 
 
-The experiment is detailed in the Journal of Prognostics and Health Management, with an extensive discussion on the results, shortcomings, and benefits analysis. The paper also gives an overview of knowledge informed machine learning as it applies to prognostics and health management (PHM). Please cite (link below) this work if you find it useful!
+The experiment will be detailed in the Journal of Prognostics and Health Management (accepted and pending publication), with an extensive discussion on the results, shortcomings, and benefits analysis. The paper also gives an overview of knowledge informed machine learning as it applies to prognostics and health management (PHM).
 
 You can replicate the work, and all figures, by following the instructions in the [Setup](#setup) section. If you have any questions, leave a comment in the discussion, or email me (18tcvh@queensu.ca).
 
@@ -90,7 +90,7 @@ To reproduce results:
    * HPC: use `make train_ims` or `make train_femto`. The HPC environment should be automatically detected. A SLURM script will be run for a batch job.
    * Modify the `train_modify_ims_hpc.sh` or `train_model_femto_hpc.sh` in the `src/models` directory to meet the needs of your HPC cluster. This should work on Compute Canada out of the box.
 8. Filter out the poorly performing models and collate the results. This will create several results files in the `models/final` folder.
-   * Linux/MacOS: use `make train_ims` or `make train_femto`. (note: set constants in `train_models.py` for changing random search parameters. Will eventually modify for use with Argeparse...)
+   * Linux/MacOS: use `make train_ims` or `make train_femto`. (note: set constants in `train_models.py` for changing random search parameters. Will eventually modify for use with Argparse...)
 
   ...
 
