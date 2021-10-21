@@ -85,7 +85,7 @@ summarize_femto_models:
 ifeq (True,$(HAS_CONDA)) # assume on local
 	$(PYTHON_INTERPRETER) src/models/summarize_model_results.py femto
 else # assume on HPC
-	sbatch src/models/summarize_model_ims_hpc.sh $(PROJECT_DIR)
+	sbatch src/models/summarize_model_femto_hpc.sh $(PROJECT_DIR)
 endif
 
 
