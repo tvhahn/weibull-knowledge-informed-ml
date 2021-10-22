@@ -90,9 +90,9 @@ To reproduce results:
    * HPC: use `make train_ims` or `make train_femto`. The HPC environment should be automatically detected. A SLURM script will be run for a batch job.
    * Modify the `train_modify_ims_hpc.sh` or `train_model_femto_hpc.sh` in the `src/models` directory to meet the needs of your HPC cluster. This should work on Compute Canada out of the box.
 8. Filter out the poorly performing models and collate the results. This will create several results files in the `models/final` folder.
-   * Linux/MacOS: use `make train_ims` or `make train_femto`. (note: set constants in `train_models.py` for changing random search parameters. Will eventually modify for use with Argparse...)
+   * Linux/MacOS: use `make summarize_ims_models` or `make summarize_femto_models`. (note: set filter boundaries in `summarize_model_results.py`. Will eventually modify for use with Argparse...)
    * Windows: run manually by calling the script.
-   * HPC: use 
+   * HPC: use `make summarize_ims_models` or `make summarize_femto_models`. Again, change filter requirements in the `summarize_model_results.py` script.
 
   ...
 
