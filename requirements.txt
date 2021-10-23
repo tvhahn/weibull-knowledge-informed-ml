@@ -3,7 +3,7 @@ arff==0.9
 argon2-cffi==20.1.0
 async-generator==1.10
 attrs==21.2.0
-Babel==2.9.0
+babel>=2.9.1
 backcall==0.2.0
 backports-abc==0.5
 backports.shutil-get-terminal-size==1.0.0
