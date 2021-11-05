@@ -21,7 +21,7 @@ else
     cd $PROJECT_DIR/data/raw
 fi
 
-move to raw data folder
+# move to raw data folder
 cd $PROJECT_DIR/data/raw
 
 # PRONOSTIA (FEMTO) data set
