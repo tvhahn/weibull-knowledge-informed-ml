@@ -12,9 +12,9 @@ if [ ! -f "IMS/IMS.7z" ]; then
 else
     cd IMS
     7za e IMS.7z
-    unrar x 1st_test.rar
-    unrar x 2nd_test.rar
-    unrar x 3rd_test.rar
+    unrar x -o+ 1st_test.rar
+    unrar x -o+ 2nd_test.rar
+    unrar x -o+ 3rd_test.rar
     mkdir 3rd_test
     cd 4th_test
     mv txt/* ../3rd_test/
