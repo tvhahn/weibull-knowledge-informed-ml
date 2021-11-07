@@ -30,7 +30,7 @@ if [ ! -f "FEMTO/FEMTOBearingDataSet.zip" ]; then
     echo "Ensure PRONOSTIA (FEMTO) data downloaded"
 else
     cd FEMTO
-    unzip FEMTOBearingDataSet.zip
-    unzip Training_set.zip
-    unzip Test_set.zip
+    unzip -o FEMTOBearingDataSet.zip
+    unzip -o Training_set.zip
+    unzip -o Test_set.zip
 fi
