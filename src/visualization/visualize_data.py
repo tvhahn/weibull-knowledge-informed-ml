@@ -162,7 +162,7 @@ def plot_freq_peaks(
 
 
 def plot_spectogram_with_binned(
-    df_spec, labels_dict, path_save_name, vmax_factor1=0.1, vmax_factor2=0.9, dpi=150
+    df_spec, labels_dict, path_save_name, vmax_factor1=0.1, vmax_factor2=0.9, dpi=150, save_plot=True
 ):
     color_scheme = "inferno"
 
@@ -252,7 +252,10 @@ def plot_spectogram_with_binned(
     )
 
     sns.despine(left=True, bottom=True, right=True)
-    plt.savefig(path_save_name, bbox_inches="tight", dpi=dpi)
+    if save_plot:
+        plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
+    else:
+        plt.show()
 
 
 def weibull_pdf(t, eta, beta):
