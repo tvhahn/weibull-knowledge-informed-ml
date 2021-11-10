@@ -162,7 +162,7 @@ def plot_freq_peaks(
 
 
 def plot_spectogram_with_binned(
-    df_spec, labels_dict, path_save_name, vmax_factor1=0.1, vmax_factor2=0.9, dpi=150, save_plot=True
+    df_spec, labels_dict, path_save_name=Path("dummy_folder"), vmax_factor1=0.1, vmax_factor2=0.9, dpi=150, save_plot=True
 ):
     color_scheme = "inferno"
 
@@ -176,6 +176,7 @@ def plot_spectogram_with_binned(
         1,
         2,
         figsize=(11, 4),
+        dpi=dpi,
     )
 
     vmax_val = np.max(df_spec.to_numpy().flatten())
