@@ -302,7 +302,7 @@ def plot_weibull_example(
 
 
 def ims_data_processed_fig(
-    folder_data_ims, path_save_name="spectrograms_processed_data_IMS.png", dpi=300
+    folder_data_ims, path_save_name="spectrograms_processed_data_IMS.png", dpi=300, save_plot=True
 ):
     (
         x_train,
@@ -345,7 +345,7 @@ def ims_data_processed_fig(
     color_scheme = "inferno"
 
     fig = plt.figure(
-        figsize=(11, 8),
+        figsize=(11, 8), dpi=dpi
     )
     gs = gridspec.GridSpec(2, 2)
 
@@ -427,7 +427,10 @@ def ims_data_processed_fig(
         counter += 1
 
     sns.despine(left=True, bottom=True, right=True)
-    plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
+    if save_plot:
+        plt.savefig(path_save_name, bbox_inches="tight")
+    else:
+        plt.show()
 
 
 def femto_data_processed_fig(
@@ -435,6 +438,7 @@ def femto_data_processed_fig(
     path_save_name="spectrograms_processed_data_FEMTO.png",
     dpi=300,
     vmax_val=0.15,
+    save_plot=True,
 ):
     # load data
     (
@@ -539,7 +543,7 @@ def femto_data_processed_fig(
         "(i)" + " Test Data (Bearing3_3)",
     ]
 
-    fig = plt.figure(figsize=(14, 12), dpi=150)
+    fig = plt.figure(figsize=(14, 12), dpi=dpi)
     gs = gridspec.GridSpec(3, 3)
     ax1 = plt.subplot(gs[0, 0])
     ax2 = plt.subplot(gs[0, 1])
@@ -611,7 +615,10 @@ def femto_data_processed_fig(
         counter += 1
 
     sns.despine(left=True, bottom=True, right=True)
-    plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
+    if save_plot:
+        plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
+    else:
+        plt.show()
 
 
 def main():

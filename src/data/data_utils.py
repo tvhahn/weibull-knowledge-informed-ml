@@ -109,6 +109,32 @@ def create_date_dict(folder):
 
 
 def create_x_y(df_spec, labels_dict, bucket_size=1000, print_shape=False):
+    """Create x, y data set from the dataframe
+    
+    Parameters
+    ===========
+    df_spec : dataframe
+        Dataframe that contains the data
+
+    labels_dict : dict
+        Dictionary that contains the labels
+
+    bucket_size : int
+        Number of samples to be used in each bucket
+
+    print_shape : bool
+        Whether or not to print the shape of the data
+
+
+    Returns
+    ===========
+    x : ndarray
+        Array of the x data
+    
+    y : ndarray
+        Array of the y data. Each data point includes the run time since start (in days),
+        the percentage life remaining, and the remaining useful life (in days)
+    """
 
     samples = df_spec.shape[1]
 
