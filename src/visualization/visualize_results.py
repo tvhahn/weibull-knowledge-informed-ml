@@ -723,19 +723,19 @@ def main():
     loss_function_percentage_fig(
         path_results / "ims_count_results.csv",
         path_results / "femto_count_results.csv",
-        path_save_loc / "loss_function_percentages.svg",
+        path_save_loc / "loss_function_percentages.pdf",
     )
 
     loss_function_correlation_fig(
         path_results / "ims_correlation_results.csv",
         path_results / "femto_correlation_results.csv",
-        path_save_loc / "correlations.svg",
+        path_save_loc / "correlations.pdf",
     )
 
     early_stop_distribution_fig(
         path_results / "ims_results_filtered.csv",
         path_results / "femto_results_filtered.csv",
-        path_save_loc / "epoch_stop_dist.png",
+        path_save_loc / "epoch_stop_dist.pdf",
         dpi=150,
     )
 
@@ -754,7 +754,7 @@ def main():
         root_dir / "models/final/top_models_femto",
         model_name,
         folder_data_femto,
-        path_save_loc / "femto_rul_results.png",
+        path_save_loc / "femto_rul_results.pdf",
         dpi=150,
     )
 
@@ -765,7 +765,7 @@ def main():
         root_dir / "models/final/top_models_ims",
         model_name,
         folder_data_ims,
-        path_save_loc / "ims_rul_results.png",
+        path_save_loc / "ims_rul_results.pdf",
         dpi=150,
     )
 

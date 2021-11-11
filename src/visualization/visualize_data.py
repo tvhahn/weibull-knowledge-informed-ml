@@ -652,7 +652,7 @@ def main():
     plot_weibull_example(
         beta=2.0,
         eta=100,
-        path_save_name=path_save_loc / "weibull_cdf_pdf_example.svg",
+        path_save_name=path_save_loc / "weibull_cdf_pdf_example.pdf",
         dpi=300,
     )
 
@@ -684,7 +684,7 @@ def main():
         xf,
         yf,
         save_plot=True,
-        save_name=path_save_loc / "time_freq_domain_example.svg",
+        save_name=path_save_loc / "time_freq_domain_example.pdf",
     )
 
     ######################
