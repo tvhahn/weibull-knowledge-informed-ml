@@ -26,17 +26,6 @@ from src.visualization.visualize_training import (
 import argparse
 
 
-###################
-# Set Constants
-###################
-
-# before random search
-RANDOM_SEARCH_ITERATIONS = 3000
-EPOCHS = 2000
-PATIENCE = 50
-EARLY_STOP_DELAY = 0
-
-
 #######################################################
 # Argparse
 #######################################################
@@ -69,7 +58,41 @@ parser.add_argument(
     help="Location of project folder",
 )
 
+parser.add_argument(
+    "--random_search_iter",
+    dest="random_search_iter",
+    type=int,
+    default=3000,
+    help="Number of random searches to iterate over",
+)
+
+parser.add_argument(
+    "--epochs",
+    dest="epochs",
+    type=int,
+    default=2000,
+    help="Number of epochs to train each model",
+)
+
+parser.add_argument(
+    "--patience",
+    dest="patience",
+    type=int,
+    default=50,
+    help="Number of epochs without change before quiting training",
+)
+
 args = parser.parse_args()
+
+###################
+# Set Constants
+###################
+
+# before random search
+RANDOM_SEARCH_ITERATIONS = args.random_search_iter
+EPOCHS = args.epochs
+PATIENCE = args.patience
+EARLY_STOP_DELAY = 0
 
 
 #######################################################
