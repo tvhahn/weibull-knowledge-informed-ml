@@ -33,7 +33,7 @@ Functions and scripts to visualize the results.
 
 
 def loss_function_percentage_fig(
-    path_ims_count_csv, path_femto_count_csv, path_save_name, dpi=300
+    path_ims_count_csv, path_femto_count_csv, path_save_name, dpi=300, save_plot=True
 ):
     """Visualize the percentage of each loss function"""
     dfi = pd.read_csv(path_ims_count_csv)
@@ -43,6 +43,7 @@ def loss_function_percentage_fig(
         nrows=1,
         ncols=2,
         figsize=(14, 7),
+        dpi=dpi,
     )
 
     title_list = [
@@ -81,13 +82,16 @@ def loss_function_percentage_fig(
 
     plt.subplots_adjust(wspace=0.8)
     sns.despine(left=True, bottom=True)
-    plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
-    plt.cla()
-    plt.close()
+    if save_plot:
+        plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
+        plt.cla()
+        plt.close()
+    else:
+        plt.show()
 
 
 def early_stop_distribution_fig(
-    path_ims_results, path_femto_results, path_save_name, dpi=300
+    path_ims_results, path_femto_results, path_save_name, dpi=300, save_plot=True
 ):
     """Visualize the distribution of when early stopping occured, by loss function"""
     dfi = pd.read_csv(path_ims_results)
@@ -154,13 +158,16 @@ def early_stop_distribution_fig(
         ax.set_xlabel("Early Stopping Epoch", labelpad=10, fontsize=12)
         ax.set_title(title, fontsize=12, loc="left")
     sns.despine(bottom=True, left=True)
-    plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
-    plt.cla()
-    plt.close()
+    if save_plot:
+        plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
+        plt.cla()
+        plt.close()
+    else:
+        plt.show()
 
 
 def loss_function_correlation_fig(
-    path_ims_corr_csv, path_femto_corr_csv, path_save_name, dpi=300
+    path_ims_corr_csv, path_femto_corr_csv, path_save_name, dpi=300, save_plot=True
 ):
     dfi = pd.read_csv(path_ims_corr_csv)
     dfp = pd.read_csv(path_femto_corr_csv)
@@ -264,9 +271,12 @@ def loss_function_correlation_fig(
         ax.set_title(title, loc="left", size=15)
 
     plt.subplots_adjust(hspace=0.3)
-    plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
-    plt.cla()
-    plt.close()
+    if save_plot:
+        plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
+        plt.cla()
+        plt.close()
+    else:
+        plt.show()
 
 
 def calc_r2_avg(y_hats, y_val, index_sorted, window_size):
@@ -286,7 +296,7 @@ def calc_r2_avg(y_hats, y_val, index_sorted, window_size):
 
 
 def femto_results_rul_fig(
-    path_top_model_folder, top_model_name, folder_data_femto, path_save_name, dpi=300
+    path_top_model_folder, top_model_name, folder_data_femto, path_save_name, dpi=300, save_plot=True
 ):
     # load data
     (
@@ -525,14 +535,16 @@ def femto_results_rul_fig(
             ax.set_yticklabels([])
 
         counter += 1
-
-    plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
-    plt.cla()
-    plt.close()
+    if save_plot:
+        plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
+        plt.cla()
+        plt.close()
+    else:
+        plt.show()
 
 
 def ims_results_rul_fig(
-    path_top_model_folder, top_model_name, folder_data_ims, path_save_name, dpi=300
+    path_top_model_folder, top_model_name, folder_data_ims, path_save_name, dpi=300, save_plot=True
 ):
     (
         x_train,
@@ -586,7 +598,7 @@ def ims_results_rul_fig(
     # establish subplot axes
     # helpful matplotlib guide:
     # https://matplotlib.org/2.0.2/users/gridspec.html
-    fig = plt.figure(figsize=(11, 8), dpi=150)
+    fig = plt.figure(figsize=(11, 8), dpi=dpi)
     gs = gridspec.GridSpec(2, 2)
 
     ax1 = plt.subplot(gs[0, 0])
@@ -705,9 +717,12 @@ def ims_results_rul_fig(
 
         counter += 1
 
-    plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
-    plt.cla()
-    plt.close()
+    if save_plot:
+        plt.savefig(path_save_name, dpi=dpi, bbox_inches="tight")
+        plt.cla()
+        plt.close()
+    else:
+        plt.show()
 
 
 def main():
