@@ -13,4 +13,4 @@ PROJECT_DIR=$1
 module load python/3.8
 source ~/weibull/bin/activate
 
-python $PROJECT_DIR/src/models/summarize_model_results.py ims
+python $PROJECT_DIR/src/models/summarize_model_results.py --data_set ims

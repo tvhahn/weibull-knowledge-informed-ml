@@ -74,7 +74,7 @@ endif
 ## Gather the IMS models and generate summaries of how the models perform
 summarize_ims_models:	
 ifeq (True,$(HAS_CONDA)) # assume on local
-	$(PYTHON_INTERPRETER) src/models/summarize_model_results.py ims
+	$(PYTHON_INTERPRETER) src/models/summarize_model_results.py --data_set ims
 else # assume on HPC
 	sbatch src/models/summarize_model_ims_hpc.sh $(PROJECT_DIR)
 endif
@@ -83,7 +83,7 @@ endif
 ## Gather the PRONOSTIAL (FEMTO) models and generate summaries of how the models perform
 summarize_femto_models:
 ifeq (True,$(HAS_CONDA)) # assume on local
-	$(PYTHON_INTERPRETER) src/models/summarize_model_results.py femto
+	$(PYTHON_INTERPRETER) src/models/summarize_model_results.py --data_set femto
 else # assume on HPC
 	sbatch src/models/summarize_model_femto_hpc.sh $(PROJECT_DIR)
 endif

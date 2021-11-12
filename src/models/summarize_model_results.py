@@ -8,33 +8,21 @@ import matplotlib.pyplot as plt
 from multiprocessing import Pool
 
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-from src.models.model import Net
-
 from src.data.data_utils import load_train_test_ims, load_train_test_femto
 from src.models.utils import (
-    test,
-    calc_r2_avg,
-    model_metrics_test,
     test_metrics_to_results_df,
 )
 from src.models.loss import RMSELoss, RMSLELoss
-import src.models.model
-
-# from visualizations import plot_trained_model_results
-from sklearn.metrics import r2_score
 
 import h5py
 from pathlib import Path
 
-import fnmatch
 import os
 from shutil import copyfile
 import sys
 
 from scipy.stats import pointbiserialr
+import argparse
 
 
 """
@@ -49,8 +37,64 @@ Save the top performing models also in the models/final folder.
 # Set Arguments
 #######################################################
 
+# parse arguments
+parser = argparse.ArgumentParser()
+
+parser.add_argument(
+    "-s",
+    "--data_set",
+    dest="data_set",
+    type=str,
+    default="ims",
+    help="The data set use (either 'ims' or 'femto')",
+)
+
+# parser.add_argument(
+#     "-d", 
+#     "--path_data", 
+#     dest="path_data", 
+#     type=str, 
+#     help="Path to processed data"
+# )
+
+
+
+# parser.add_argument(
+#     "-p",
+#     "--proj_dir",
+#     dest="proj_dir",
+#     type=str,
+#     help="Location of project folder",
+# )
+
+# parser.add_argument(
+#     "--random_search_iter",
+#     dest="random_search_iter",
+#     type=int,
+#     default=3000,
+#     help="Number of random searches to iterate over",
+# )
+
+# parser.add_argument(
+#     "--epochs",
+#     dest="epochs",
+#     type=int,
+#     default=2000,
+#     help="Number of epochs to train each model",
+# )
+
+# parser.add_argument(
+#     "--patience",
+#     dest="patience",
+#     type=int,
+#     default=50,
+#     help="Number of epochs without change before quiting training",
+# )
+
+args = parser.parse_args()
+
 # General Parameters
-SAVE_ENTIRE_CSV = False  # if you want to save the entire CSV, before filtering
+SAVE_ENTIRE_CSV = True  # if you want to save the entire CSV, before filtering
 ADD_TEST_RESULTS = True  # if you want to append the test results
 TOP_MODEL_COUNT = 2  # the number of models to save in models/final/top_models directory
 # e.g. save top 10 models
@@ -62,7 +106,7 @@ SORT_BY = "r2_test"  # metric used to evaluate results
 # options include: 'loss_rmse_test', 'r2_val'
 # 'r2_test_avg', etc.
 
-DATASET_TYPE = str(sys.argv[1])  # 'ims' or 'femto'
+DATASET_TYPE = args.data_set  # 'ims' or 'femto'
 
 #####
 
@@ -189,8 +233,8 @@ if __name__ == "__main__":
 
     if SAVE_ENTIRE_CSV:
         df.to_csv(
-            root_dir / "models/final" / f"{DATASET_TYPE}_results_summary_all.csv",
-            index=False,
+            root_dir / "models/final" / f"{DATASET_TYPE}_results_summary_all.csv.gz",
+            index=False, compression="gzip",
         )
 
     #### append test results to df ####
@@ -293,10 +337,9 @@ if __name__ == "__main__":
 
         if SAVE_ENTIRE_CSV:
             df.to_csv(
-                root_dir / "models/final" / f"{DATASET_TYPE}_results_summary_all.csv",
-                index=False,
+                root_dir / "models/final" / f"{DATASET_TYPE}_results_summary_all.csv.gz",
+                index=False, compression="gzip",
             )
-
     # how many unique model architectures?
     print("No. unique model architectures:", len(df["date_time_seed"].unique()))
     print(
