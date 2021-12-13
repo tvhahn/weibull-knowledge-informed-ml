@@ -171,7 +171,7 @@ def early_stop_distribution_fig(
 
 
 def loss_function_correlation_fig(
-    path_ims_corr_csv, path_femto_corr_csv, path_save_name, dpi=300, save_plot=True
+    path_ims_corr_csv, path_femto_corr_csv, path_save_name="correlations.pdf", dpi=300, save_plot=True
 ):
     dfi = pd.read_csv(path_ims_corr_csv)
     dfp = pd.read_csv(path_femto_corr_csv)
