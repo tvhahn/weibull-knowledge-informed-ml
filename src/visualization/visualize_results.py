@@ -33,11 +33,13 @@ Functions and scripts to visualize the results.
 
 
 def loss_function_percentage_fig(
-    path_ims_count_csv, path_femto_count_csv, path_save_name, dpi=300, save_plot=True
+    path_ims_count_csv, path_femto_count_csv, path_save_name="loss_function_percentages.pdf", dpi=300, save_plot=True
 ):
     """Visualize the percentage of each loss function"""
     dfi = pd.read_csv(path_ims_count_csv)
     dfp = pd.read_csv(path_femto_count_csv)
+
+    sns.set(font_scale=1.0, style="whitegrid", font="DejaVu Sans") # proper formatting
 
     fig, axes = plt.subplots(
         nrows=1,
@@ -96,6 +98,8 @@ def early_stop_distribution_fig(
     """Visualize the distribution of when early stopping occured, by loss function"""
     dfi = pd.read_csv(path_ims_results)
     dfp = pd.read_csv(path_femto_results)
+
+    sns.set(font_scale=1.0, style="whitegrid", font="DejaVu Sans") # proper formatting
 
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12, 5))
 
@@ -171,6 +175,8 @@ def loss_function_correlation_fig(
 ):
     dfi = pd.read_csv(path_ims_corr_csv)
     dfp = pd.read_csv(path_femto_corr_csv)
+
+    sns.set(font_scale=1.0, style="whitegrid", font="DejaVu Sans") # proper formatting
 
     fig, axes = plt.subplots(
         nrows=2,
