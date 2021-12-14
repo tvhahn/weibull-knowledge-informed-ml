@@ -102,7 +102,7 @@ def loss_function_percentage_fig(
 
 
 def early_stop_distribution_fig(
-    path_ims_results, path_femto_results, path_save_name, dpi=300, save_plot=True
+    path_ims_results, path_femto_results, path_save_name="epoch_stop_dist.pdf", dpi=300, save_plot=True
 ):
     """Visualize the distribution of when early stopping occured, by loss function"""
     dfi = pd.read_csv(path_ims_results)
