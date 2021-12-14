@@ -42,7 +42,7 @@ Functions and scripts to visualize the results.
 
 
 def loss_function_percentage_fig(
-    path_ims_count_csv, path_femto_count_csv, path_save_name="loss_function_percentages.pdf", dpi=300, save_plot=True
+    path_ims_count_csv, path_femto_count_csv, path_save_name="loss_function_percentages.pdf", dpi=300, figsize=(14, 7), save_plot=True
 ):
     """Visualize the percentage of each loss function"""
     dfi = pd.read_csv(path_ims_count_csv)
@@ -53,7 +53,7 @@ def loss_function_percentage_fig(
     fig, axes = plt.subplots(
         nrows=1,
         ncols=2,
-        figsize=(14, 7),
+        figsize=figsize,
         dpi=dpi,
     )
 
@@ -102,7 +102,7 @@ def loss_function_percentage_fig(
 
 
 def early_stop_distribution_fig(
-    path_ims_results, path_femto_results, path_save_name="epoch_stop_dist.pdf", dpi=300, save_plot=True
+    path_ims_results, path_femto_results, path_save_name="epoch_stop_dist.pdf", dpi=300, figsize=(12, 5), save_plot=True
 ):
     """Visualize the distribution of when early stopping occured, by loss function"""
     dfi = pd.read_csv(path_ims_results)
@@ -110,7 +110,7 @@ def early_stop_distribution_fig(
 
     sns.set(font_scale=1.0, style="whitegrid", font="DejaVu Sans") # proper formatting
 
-    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12, 5))
+    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=figsize)
 
     title_list = [
         r"$\bf{(a)}$" + " IMS Distribution of Early Stopping Times",
@@ -180,7 +180,7 @@ def early_stop_distribution_fig(
 
 
 def loss_function_correlation_fig(
-    path_ims_corr_csv, path_femto_corr_csv, path_save_name="correlations.pdf", dpi=300, save_plot=True
+    path_ims_corr_csv, path_femto_corr_csv, path_save_name="correlations.pdf", figsize=(10, 12), dpi=300, save_plot=True
 ):
     dfi = pd.read_csv(path_ims_corr_csv)
     dfp = pd.read_csv(path_femto_corr_csv)
@@ -190,7 +190,7 @@ def loss_function_correlation_fig(
     fig, axes = plt.subplots(
         nrows=2,
         ncols=1,
-        figsize=(10, 12),
+        figsize=figsize,
     )
 
     title_list = [
@@ -787,6 +787,11 @@ def main():
         path_save_loc / "femto_rul_results.pdf",
         dpi=150,
     )
+
+    os.remove("model.py")  # delete model.py that was copied to root dir
+
+    # need model for loading checkpoint
+    copyfile(path_results / "top_models_ims/model.py", "model.py")
 
     # make IMS rul plots
     df_top = pd.read_csv(root_dir / "models/final/ims_results_filtered.csv")
