@@ -4,7 +4,7 @@ import matplotlib
 
 # run matplotlib without display
 # https://stackoverflow.com/a/4706614/9214620
-matplotlib.use("Agg")
+# matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 import numpy as np
