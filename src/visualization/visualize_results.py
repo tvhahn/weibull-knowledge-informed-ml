@@ -9,7 +9,7 @@ if scratch_path.exists():
     import matplotlib
     # run matplotlib without display
     # https://stackoverflow.com/a/4706614/9214620
-    # matplotlib.use("Agg")
+    matplotlib.use("Agg")
 else:
     print("Assume on local compute")
     import matplotlib
