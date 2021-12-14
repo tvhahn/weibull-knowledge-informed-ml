@@ -1,10 +1,19 @@
 from pathlib import Path
 import seaborn as sns
-import matplotlib
 
-# run matplotlib without display
-# https://stackoverflow.com/a/4706614/9214620
-# matplotlib.use("Agg")
+# check if "scratch" path exists in the home directory
+# if it does, assume we are on HPC
+scratch_path = Path.home() / "scratch"
+if scratch_path.exists():
+    print("Assume on HPC. Using Agg backend for mpl.")
+    import matplotlib
+    # run matplotlib without display
+    # https://stackoverflow.com/a/4706614/9214620
+    # matplotlib.use("Agg")
+else:
+    print("Assume on local compute")
+    import matplotlib
+
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 import numpy as np
