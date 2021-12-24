@@ -7,7 +7,7 @@ Knowledge-informed machine learning is used on the IMS and PRONOSTIA bearing dat
 
 The experiment will be detailed in the [Journal of Prognostics and Health Management](https://ojs.library.carleton.ca/index.php/jphm) (accepted and pending publication), with an extensive discussion on the results, shortcomings, and benefits analysis. The paper also gives an overview of knowledge informed machine learning as it applies to prognostics and health management (PHM).
 
-You can replicate the work, and all figures, by following the instructions in the [Setup](#setup) section. **Even easier**: run the Colab notebook! [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/tvhahn/weibull-knowledge-informed/blob/master/notebooks/example.ipynb)
+You can replicate the work, and all figures, by following the instructions in the [Setup](#setup) section. **Even easier**: run the Colab notebook! [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/tvhahn/weibull-knowledge-informed-ml/blob/master/notebooks/example.ipynb)
 
 If you have any questions, leave a comment in the discussion, or email me (18tcvh@queensu.ca).
 
@@ -70,7 +70,7 @@ Tested in linux (MacOS should also work). If you run windows you'll have to do m
 
 To reproduce results:
 
-1. Clone this repo - `clone https://github.com/tvhahn/weibull-knowledge-informed.git`
+1. Clone this repo - `clone https://github.com/tvhahn/weibull-knowledge-informed-ml.git`
 2. Create virtual environment. Assumes that Conda is installed.
    * Linux/MacOS: use command from the Makefile in the root directory - `make create_environment`
    * Windows: from root directory - `conda env create -f envweibull.yml`
@@ -84,7 +84,7 @@ To reproduce results:
    * Windows: Manually extract data. See the [Project Organization](#project-organization) section for folder structure.
    * HPC: use `make download`. Will automatically detect HPC environment. Again, modify for your HPC cluster.
 5. Ensure virtual environment is activated. `conda activate weibull` or `source ~/weibull/bin/activate`
-6. From root directory of `weibull-knowledge-informed`, run `pip install -e .` -- this will give the python scripts access to the `src` folders.
+6. From root directory of `weibull-knowledge-informed-ml`, run `pip install -e .` -- this will give the python scripts access to the `src` folders.
 7. Train!
 
    * Linux/MacOS: use `make train_ims` or `make train_femto`. (note: set constants in `train_models.py` for changing random search parameters. Will eventually modify for use with Argeparse...)
