@@ -126,22 +126,28 @@ Project Organization
     │   ├── processed      <- The final, canonical data sets for modeling.
     │   └── raw            <- The original, immutable data dump. Downloaded from the NASA Prognostic repository.
     │
-    ├── docs               <- A default Sphinx project; see sphinx-doc.org for details (in progress)
+    ├── docs               <- A default Sphinx project; see sphinx-doc.org for details (nothing in here yet)
     │
     ├── models             <- Trained models, model predictions, and model summaries
     │   ├── interim        <- Intermediate models that have not analyzed. Output from the random search.
+    │   ├── final          <- Final models that have been filtered and summarized. Several outpu csv files as well.
     │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
+    ├── notebooks          <- Jupyter notebooks used for data exploration and analysis. Of varying quality.
+    │   ├── scratch        <- Scratch notebooks for quick experimentation.     
     │
-    ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
+    ├── references         <- Data dictionaries, manuals, and all other explanatory materials (empty).
     │
     ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
     │   └── figures        <- Generated graphics and figures to be used in reporting
     │
     ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
     │                         generated with `pip freeze > requirements.txt`
+    │
+    ├── envweibull.yml    <- The Conda environment file for reproducing the analysis environment
+    │                        recommend using Conda).
+    │
+    ├── make_hpc_venv.sh  <- Bash script to create the HPC venv. Setup for my Compute Canada cluster.
+    │                        Modify to suit your own HPC cluster.
     │
     ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
     ├── src                <- Source code for use in this project.
@@ -153,15 +159,14 @@ Project Organization
     │   ├── features       <- Scripts to turn raw data into features for modeling
     │   │   └── build_features.py
     │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
+    │   ├── models         <- Scripts to train models               
+    │   │   └── predict_model.py
     │   │
-    │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
-    │
-    └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
+    │   └── visualization  <- Scripts to create figures of the data, results, and training progress
+    │       ├── visualize_data.py       
+    │       ├── visualize_results.py     
+    │       └── visualize_training.py    
+
 
 ## Future List
 
