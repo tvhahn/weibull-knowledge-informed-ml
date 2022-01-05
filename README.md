@@ -170,6 +170,4 @@ Project Organization
 
 ## Future List
 
-Things to add, sometime, in the future:
-
-* 
+As noted in the paper, the best thing would be to test out Weibull-based loss functions on large, and real-world, industrial datasets. Suitable applications may include large fleets of pumps or gas turbines. 
