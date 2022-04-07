@@ -1,4 +1,4 @@
-Knowledge Informed Machine Learning using a Weibull-based Loss Function
+Knowledge-Informed Machine Learning using a Weibull-based Loss Function
 ==============================
 
 > Exploring the concept of knowledge-informed machine learning with the use of a Weibull-based loss function. Used to predict remaining useful life (RUL) on the [IMS](https://ti.arc.nasa.gov/tech/dash/groups/pcoe/prognostic-data-repository/#bearing) and [PRONOSTIA](https://ti.arc.nasa.gov/tech/dash/groups/pcoe/prognostic-data-repository/#femto) (also called FEMTO) bearing data sets.
