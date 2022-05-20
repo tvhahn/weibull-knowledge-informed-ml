@@ -10,7 +10,7 @@ Knowledge informed machine learning is used on the IMS and PRONOSTIA bearing dat
 
 The experiment will be detailed in the [Journal of Prognostics and Health Management](https://ojs.library.carleton.ca/index.php/jphm) (accepted and pending publication -- preprint [here](https://arxiv.org/abs/2201.01769)), with an extensive discussion on the results, shortcomings, and benefits analysis. The paper also gives an overview of knowledge informed machine learning as it applies to prognostics and health management (PHM).
 
-You can replicate the work, and all figures, by following the instructions in the [Setup](#setup) section. **Even easier**: run the [Colab notebook](https://colab.research.google.com/github/tvhahn/weibull-knowledge-informed-ml/blob/master/notebooks/example.ipynb)!
+You can reproduce the work, and all figures, by following the instructions in the [Setup](#setup) section. **Even easier**: run the [Colab notebook](https://colab.research.google.com/github/tvhahn/weibull-knowledge-informed-ml/blob/master/notebooks/example.ipynb)!
 
 If you have any questions, leave a comment in the discussion, or email me (18tcvh@queensu.ca).
 
