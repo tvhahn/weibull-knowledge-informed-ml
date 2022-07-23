@@ -14,6 +14,20 @@ You can reproduce the work, and all figures, by following the instructions in th
 
 If you have any questions, leave a comment in the discussion, or email me (18tcvh@queensu.ca).
 
+Feel free to cite my research if you use it in any academic research.
+```
+@article{von2022knowledge,
+  title={Knowledge Informed Machine Learning using a Weibull-based Loss Function},
+  author={von Hahn, Tim and Mechefske, Chris K},
+  journal={Journal of Prognostics and Health Management},
+  volume={2},
+  number={1},
+  pages={9--44},
+  year={2022}
+}
+
+```
+
 ## Summary
 
 In this work, we use the definition of knowledge informed machine learning from von Rueden et al. (their excellent paper is [here](https://arxiv.org/abs/1903.12394)). Here's the general taxonomy of our knowledge informed machine learning experiment:
