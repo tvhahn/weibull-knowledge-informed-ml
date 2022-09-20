@@ -14,7 +14,7 @@ You can reproduce the work, and all figures, by following the instructions in th
 
 If you have any questions, leave a comment in the discussion, or email me (18tcvh@queensu.ca).
 
-Feel free to cite my research if you use it in any academic research.
+Feel free to cite my research if you find it useful. Thanks!
 ```
 @article{von2022knowledge,
   title={Knowledge Informed Machine Learning using a Weibull-based Loss Function},
