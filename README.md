@@ -93,8 +93,8 @@ To reproduce results:
    * Windows: from root directory - `conda env create -f envweibull.yml`
    * HPC: `make create_environment` will detect HPC environment and automatically create environment from `make_hpc_venv.sh`. Tested on Compute Canada. Modify `make_hpc_venv.sh` for your own HPC cluster.
 
-3. Download raw data.
-   * Linux/MacOS: use `make download`. Will automatically download to appropriate `data/raw` directory.
+3. Download raw data. The data is from [NASA's Prognostics Center of Excellence Data Set Repository](https://www.nasa.gov/content/prognostics-center-of-excellence-data-set-repository) (which has been recently updated).
+   * Linux/MacOS: use `make download`. Will automatically download to appropriate `data/raw` directory. Downloads from Google Drive (since the NASA link wasn't working for sometime).
    * Windows: Manually download the the [IMS](https://phm-datasets.s3.amazonaws.com/NASA/4.+Bearings.zip) and [PRONOSTIA](https://phm-datasets.s3.amazonaws.com/NASA/10.+FEMTO+Bearing.zip) (FEMTO) data sets from NASA prognostics data repository. Put in `data/raw` folder and extract. Put the `IMS.7z` into the `data/raw/IMS` folder and the `FEMTOBearingDataSet.zip` into the `data/raw/FEMTO` folder.
    * HPC: use `make download`. Will automatically detect HPC environment.
 
