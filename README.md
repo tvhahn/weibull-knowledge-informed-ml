@@ -95,7 +95,7 @@ To reproduce results:
 
 3. Download raw data.
    * Linux/MacOS: use `make download`. Will automatically download to appropriate `data/raw` directory.
-   * Windows: Manually download the the [IMS](https://ti.arc.nasa.gov/tech/dash/groups/pcoe/prognostic-data-repository/#bearing) and [PRONOSTIA](https://ti.arc.nasa.gov/tech/dash/groups/pcoe/prognostic-data-repository/#femto) (FEMTO) data sets from NASA prognostics data repository. Put in `data/raw` folder.
+   * Windows: Manually download the the [IMS](https://phm-datasets.s3.amazonaws.com/NASA/4.+Bearings.zip) and [PRONOSTIA](https://phm-datasets.s3.amazonaws.com/NASA/10.+FEMTO+Bearing.zip) (FEMTO) data sets from NASA prognostics data repository. Put in `data/raw` folder and extract. Put the `IMS.7z` into the `data/raw/IMS` folder and the `FEMTOBearingDataSet.zip` into the `data/raw/FEMTO` folder.
    * HPC: use `make download`. Will automatically detect HPC environment.
 
 4. Extract raw data.
