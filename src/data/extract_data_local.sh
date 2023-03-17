@@ -31,6 +31,8 @@ if [ ! -f "FEMTO/FEMTOBearingDataSet.zip" ]; then
 else
     cd FEMTO
     unzip -o FEMTOBearingDataSet.zip
+    cd "10. FEMTO Bearing"
+    unzip -o FEMTOBearingDataSet.zip
     unzip -o Training_set.zip
     unzip -o Test_set.zip
 fi
