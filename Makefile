@@ -23,7 +23,7 @@ endif
 create_environment: test_environment
 ifeq (True,$(HAS_CONDA)) # assume on local
 	@echo ">>> Detected conda. Assume local computer. Installing packages from yml."
-	conda env create -f envweibull.yml
+	bash make_local_venv.sh
 else # assume on HPC
 	@echo ">>> No Conda detected. Assume on HPC."
 	bash make_hpc_venv.sh
