@@ -24,7 +24,7 @@ def main(path_data_folder):
     folder_femto.mkdir(parents=True, exist_ok=True)
 
     url = "https://phm-datasets.s3.amazonaws.com/NASA/4.+Bearings.zip"
-    filename = folder_ims / "IMS.7z"
+    filename = folder_ims / "4.+Bearings.zip"
     urllib.request.urlretrieve(url, filename)
 
     url = "https://phm-datasets.s3.amazonaws.com/NASA/10.+FEMTO+Bearing.zip"

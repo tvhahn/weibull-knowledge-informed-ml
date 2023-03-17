@@ -7,10 +7,15 @@ cd $PROJECT_DIR/data/raw
 
 # IMS data set
 # Check if directory does not exist
-if [ ! -f "IMS/IMS.7z" ]; then
+if [ ! -f "IMS/4.+Bearings.zip" ]; then
     echo "Ensure IMS data downloaded"
 else
     cd IMS
+    unzip -o "4.+Bearings.zip"
+    cd "4. Bearings"
+    # move the IMS.7z into the IMS folder
+    mv IMS.7z ../IMS.7z
+    cd ..
     7za e IMS.7z
     unrar x -o+ 1st_test.rar
     unrar x -o+ 2nd_test.rar
