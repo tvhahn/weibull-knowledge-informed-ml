@@ -2,6 +2,7 @@ from pathlib import Path
 import logging
 import gdown
 import argparse
+import urllib.request
 
 file_dict = {
     'IMS.7z': '1iJqTYQpHst_uYSyU5d2THsZkA8Vk6Inx',
@@ -22,15 +23,23 @@ def main(path_data_folder):
     folder_femto = folder_raw_data / "FEMTO"
     folder_femto.mkdir(parents=True, exist_ok=True)
 
-    # download IMS
-    gdown.download(
-        id='1iJqTYQpHst_uYSyU5d2THsZkA8Vk6Inx', 
-        output=str(folder_ims / "IMS.7z"), quiet=False)
+    url = "https://phm-datasets.s3.amazonaws.com/NASA/4.+Bearings.zip"
+    filename = folder_ims / "IMS.7z"
+    urllib.request.urlretrieve(url, filename)
 
-    # download FEMTO
-    gdown.download(
-        id='1Ab3ggc-bOdLAglHw4-a0NNtadrPJR98L', 
-        output=str(folder_femto / "FEMTOBearingDataSet.zip"), quiet=False)
+    url = "https://phm-datasets.s3.amazonaws.com/NASA/10.+FEMTO+Bearing.zip"
+    filename = folder_femto / "FEMTOBearingDataSet.zip"
+    urllib.request.urlretrieve(url, filename)
+
+    # # download IMS
+    # gdown.download(
+    #     id='1iJqTYQpHst_uYSyU5d2THsZkA8Vk6Inx', 
+    #     output=str(folder_ims / "IMS.7z"), quiet=False)
+
+    # # download FEMTO
+    # gdown.download(
+    #     id='1Ab3ggc-bOdLAglHw4-a0NNtadrPJR98L', 
+    #     output=str(folder_femto / "FEMTOBearingDataSet.zip"), quiet=False)
 
     logger.info("downloading done")
 
